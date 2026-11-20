@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>amenitiz — career compass — ai operations</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue:#507FE6; --blue-dark:#2D58B8; --blue-darker:#1A3A8A; --blue-light:#7BA3EF;
+  --blue-pale:#D6E4FB; --blue-bg:#EEF4FF;
+  --gold:#C9A96E; --gold-dark:#8B6F3F; --gold-light:#E8D5B0; --gold-bg:#FFF8ED;
+  --hybrid:#9B6FB0; --hybrid-bg:#F5E8FF; --hybrid-light:#D9BBE7;
+  --white:#FFFFFF; --gray-50:#F7F9FE; --gray-100:#EBF0FA; --gray-200:#CFDAF5;
+  --gray-400:#8FA6D4; --gray-600:#4A6199; --gray-900:#0D1F4A;
+  --font:'DM Sans',sans-serif; --radius:16px; --radius-sm:10px;
+}
+body { font-family:var(--font); background:var(--gray-50); color:var(--gray-900); min-height:100vh; line-height:1.6; }
+
+/* GATE */
+#gate { position:fixed; inset:0; z-index:1000; background:var(--blue-darker); display:flex; align-items:center; justify-content:center; padding:24px; }
+#gate.hidden { display:none; }
+.gate-bg { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+.gate-blob { position:absolute; border-radius:50%; background:rgba(255,255,255,0.04); }
+.gb1 { width:400px; height:320px; top:-80px; left:-60px; border-radius:60% 40% 70% 30%; }
+.gb2 { width:280px; height:220px; bottom:-40px; right:-40px; border-radius:40% 60% 30% 70%; }
+.gb3 { width:160px; height:160px; top:40%; left:60%; border-radius:50%; background:rgba(201,169,110,0.06); }
+.gate-deco-tl { position:absolute; top:32px; left:32px; opacity:0.25; }
+.gate-deco-br { position:absolute; bottom:32px; right:32px; opacity:0.2; }
+.gate-card { position:relative; z-index:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:40px 36px 36px; width:100%; max-width:400px; backdrop-filter:blur(12px); animation:gateIn .4s cubic-bezier(.22,1,.36,1) both; }
+@keyframes gateIn { from { opacity:0; transform:translateY(16px) scale(.98); } to { opacity:1; transform:translateY(0) scale(1); } }
+.gate-logo { font-size:18px; font-weight:300; color:var(--white); letter-spacing:-.01em; margin-bottom:4px; }
+.gate-title { font-size:22px; font-weight:500; color:var(--white); margin-bottom:6px; line-height:1.2; }
+.gate-sub { font-size:13px; color:rgba(255,255,255,0.5); margin-bottom:28px; line-height:1.5; }
+.gate-field { margin-bottom:14px; }
+.gate-label { display:block; font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.07em; color:rgba(255,255,255,0.5); margin-bottom:6px; }
+.gate-input { width:100%; padding:11px 14px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; font-family:var(--font); font-size:14px; color:var(--white); outline:none; transition:border-color .15s,background .15s; }
+.gate-input::placeholder { color:rgba(255,255,255,0.3); }
+.gate-input:focus { border-color:rgba(255,255,255,0.4); background:rgba(255,255,255,0.12); }
+.gate-input.error { border-color:#F08080; }
+.gate-error { font-size:12px; color:#F08080; margin-top:8px; min-height:18px; display:flex; align-items:center; gap:5px; }
+.gate-error::before { content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:#F08080; flex-shrink:0; }
+.gate-error:empty { display:none; } .gate-error:empty::before { display:none; }
+.gate-btn { width:100%; margin-top:20px; padding:13px; background:var(--blue); border:none; border-radius:10px; font-family:var(--font); font-size:14px; font-weight:500; color:var(--white); cursor:pointer; transition:background .15s,transform .1s; letter-spacing:.01em; }
+.gate-btn:hover { background:var(--blue-dark); } .gate-btn:active { transform:scale(.99); }
+.gate-hint { margin-top:16px; text-align:center; font-size:11.5px; color:rgba(255,255,255,0.3); line-height:1.5; }
+
+/* APP */
+#app { display:none; } #app.visible { display:block; }
+header { background:var(--blue); padding:0; position:relative; overflow:hidden; min-height:72px; display:flex; align-items:center; }
+.header-bg { position:absolute; inset:0; pointer-events:none; }
+.blob { position:absolute; border-radius:50%; background:rgba(255,255,255,0.08); }
+.blob-1 { width:180px; height:140px; top:-40px; left:60px; border-radius:60% 40% 70% 30%; }
+.blob-2 { width:120px; height:100px; top:10px; right:200px; border-radius:40% 60% 30% 70%; }
+.blob-3 { width:80px; height:80px; bottom:-20px; right:80px; border-radius:50%; }
+.deco-svg { position:absolute; right:24px; top:50%; transform:translateY(-50%); opacity:0.5; }
+.header-inner { position:relative; z-index:1; padding:16px 40px; display:flex; align-items:center; justify-content:space-between; width:100%; }
+.logo { font-size:20px; font-weight:300; color:var(--white); letter-spacing:-.01em; }
+.header-right { display:flex; align-items:center; gap:16px; }
+.header-tag { font-size:12px; font-weight:400; color:rgba(255,255,255,0.7); letter-spacing:.02em; }
+.logout-btn { font-size:11.5px; font-weight:400; color:rgba(255,255,255,0.5); background:none; border:1px solid rgba(255,255,255,0.2); border-radius:20px; padding:4px 12px; cursor:pointer; font-family:var(--font); transition:all .15s; letter-spacing:.01em; }
+.logout-btn:hover { color:var(--white); border-color:rgba(255,255,255,0.5); }
+
+.container { max-width:1100px; margin:0 auto; padding:28px 24px 60px; }
+
+/* PATH SELECTOR */
+.selector-intro { text-align:center; margin-bottom:18px; }
+.selector-title { font-size:22px; font-weight:500; color:var(--gray-900); margin-bottom:8px; letter-spacing:-.015em; }
+.selector-sub { font-size:12.5px; color:var(--gray-600); max-width:680px; margin:0 auto; line-height:1.55; }
+.paths-container { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; align-items:start; margin-bottom:22px; }
+.path-section { min-width:0; border-radius:14px; padding:14px 14px 16px; border:1.5px solid; }
+.path-section-ic { background:linear-gradient(180deg,var(--blue-bg) 0%,var(--white) 80%); border-color:var(--blue-pale); }
+.path-section-mg { background:linear-gradient(180deg,var(--gold-bg) 0%,var(--white) 80%); border-color:var(--gold-light); }
+.path-head { margin-bottom:12px; padding-bottom:10px; border-bottom:1px dashed; display:flex; align-items:baseline; gap:10px; }
+.path-section-ic .path-head { border-bottom-color:var(--blue-pale); }
+.path-section-mg .path-head { border-bottom-color:var(--gold-light); }
+.path-head-text { flex:1; min-width:0; }
+.path-head-title { font-size:13px; font-weight:600; letter-spacing:.02em; line-height:1.2; }
+.path-section-ic .path-head-title { color:var(--blue-darker); }
+.path-section-mg .path-head-title { color:var(--gold-dark); }
+.path-head-sub { font-size:11.5px; font-weight:400; color:var(--gray-600); margin-top:3px; line-height:1.4; }
+.ic-grid-wrap { overflow-x:auto; padding-bottom:4px; }
+.ic-grid { display:grid; grid-template-columns:42px minmax(220px,360px); gap:6px; }
+
+/* Placeholder comparison — shown for roles with empty competencies array */
+.placeholder-comparison { grid-column: 1 / -1; display:flex; gap:14px; align-items:flex-start; padding:24px 26px; background:var(--gray-50); border:1px dashed var(--gray-200); border-radius:var(--radius-sm); }
+.placeholder-comparison-icon { color:var(--gray-400); flex-shrink:0; }
+.placeholder-comparison-title { font-size:14px; font-weight:600; color:var(--gray-700); margin-bottom:4px; }
+.placeholder-comparison-body { font-size:12.5px; color:var(--gray-600); line-height:1.55; }
+.track-header { font-size:9.5px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--gray-400); text-align:center; padding:4px 4px 8px; }
+.mg-ladder { display:flex; flex-direction:column; gap:6px; }
+.mg-row { display:grid; grid-template-columns:48px 1fr; gap:6px; }
+.mg-roles { display:flex; gap:6px; flex-wrap:wrap; }
+.mg-roles .org-cell { flex:1 1 0; min-width:120px; }
+
+.level-label { font-size:11px; font-weight:600; color:var(--gray-400); text-align:center; align-self:center; letter-spacing:.04em; user-select:none; cursor:pointer; padding:8px 4px; border-radius:8px; transition:all .15s; background:var(--white); border:1.5px solid var(--gray-200); position:relative; min-height:42px; display:flex; align-items:center; justify-content:center; }
+.level-label:hover { background:var(--blue-bg); border-color:var(--blue-light); color:var(--blue); }
+.level-label.mg-label:hover { background:var(--gold-bg); border-color:var(--gold); color:var(--gold-dark); }
+.level-label.active-level { background:var(--blue); color:var(--white); border-color:var(--blue); box-shadow:0 2px 6px rgba(80,127,230,0.3); }
+.level-label.mg-label.active-level { background:var(--gold); color:var(--white); border-color:var(--gold); box-shadow:0 2px 6px rgba(201,169,110,0.35); }
+
+/* Cell wraps multi-role stacks (e.g. IC3 Performance has Performance/CRO/SEO/PMM) */
+.cell-wrap { display:flex; flex-direction:column; gap:4px; min-height:42px; }
+.org-cell { background:var(--white); border:1.5px solid var(--gray-200); border-radius:10px; padding:8px 9px; font-size:11px; font-family:var(--font); font-weight:400; color:var(--gray-600); cursor:pointer; transition:all .15s; text-align:center; line-height:1.25; display:flex; align-items:center; justify-content:center; flex:1 1 0; min-height:46px; word-break:normal; overflow-wrap:break-word; hyphens:auto; }
+.org-cell:hover { border-color:var(--blue-light); color:var(--blue); background:var(--blue-bg); }
+.org-cell.active { border-color:var(--blue); background:var(--blue); color:var(--white); font-weight:500; box-shadow:0 2px 8px rgba(80,127,230,0.25); }
+.org-cell-mg { border-color:var(--gold-light); }
+.org-cell-mg:hover { border-color:var(--gold); color:var(--gold-dark); background:var(--gold-bg); }
+.org-cell-mg.active { border-color:var(--gold); background:var(--gold); color:var(--white); box-shadow:0 2px 8px rgba(201,169,110,0.3); }
+.org-cell-hybrid { border-color:var(--hybrid-light); border-style:dashed; }
+.org-cell-hybrid:hover { border-color:var(--hybrid); color:var(--hybrid); background:var(--hybrid-bg); border-style:solid; }
+.org-cell-hybrid.active { border-color:var(--hybrid); background:var(--hybrid); color:var(--white); border-style:solid; box-shadow:0 2px 8px rgba(155,111,176,0.3); }
+.org-cell-gated { opacity:0.55; border-style:dashed; flex-direction:column; gap:2px; padding:6px 9px; transition:opacity .2s,border-style .2s,background .15s; }
+.org-cell-gated:hover { opacity:1; border-style:solid; }
+.org-cell-gated.active { opacity:1; border-style:solid; }
+.gate-tag { font-size:9px; font-style:italic; text-transform:uppercase; letter-spacing:.05em; color:var(--gray-400); font-weight:500; }
+.org-cell-gated:hover .gate-tag, .org-cell-gated.active .gate-tag { color:inherit; opacity:0.8; }
+.org-empty { border:1px dashed rgba(207,218,245,0.5); border-radius:10px; background:transparent; min-height:42px; }
+
+/* SECTION HEADERS */
+.sec-divider { display:flex; align-items:center; gap:10px; margin:0 0 10px; flex-wrap:wrap; }
+.sec-pill { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; padding:3px 10px; border-radius:12px; }
+.sec-pill-blue { color:var(--blue-darker); background:var(--blue-bg); border:1px solid var(--blue-pale); }
+.sec-hint { font-size:11.5px; color:var(--gray-600); font-style:italic; flex:1; min-width:200px; }
+
+/* COLLAPSIBLE PANEL */
+.panel { background:var(--white); border:1px solid var(--gray-100); border-radius:var(--radius); margin-bottom:18px; overflow:hidden; transition:border-color .2s; }
+.panel.is-mg { border-color:var(--gold-light); }
+.panel.is-hybrid { border-color:var(--hybrid-light); }
+.panel-header { display:flex; align-items:center; gap:12px; padding:13px 16px; cursor:pointer; background:var(--blue-bg); transition:background .15s; user-select:none; }
+.panel.is-mg .panel-header { background:var(--gold-bg); }
+.panel.is-hybrid .panel-header { background:var(--hybrid-bg); }
+.panel-header:hover { background:var(--blue-pale); }
+.panel.is-mg .panel-header:hover { background:var(--gold-light); }
+.panel.is-hybrid .panel-header:hover { background:var(--hybrid-light); }
+.panel-icon { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--blue-dark); background:var(--white); padding:3px 9px; border-radius:12px; border:1px solid var(--blue-pale); flex-shrink:0; }
+.panel.is-mg .panel-icon { color:var(--gold-dark); border-color:var(--gold); }
+.panel.is-hybrid .panel-icon { color:var(--hybrid); border-color:var(--hybrid-light); }
+.panel-title { flex:1; font-size:13.5px; font-weight:500; color:var(--blue-darker); }
+.panel.is-mg .panel-title { color:var(--gold-dark); }
+.panel.is-hybrid .panel-title { color:var(--hybrid); }
+.panel-title-strong { font-weight:600; }
+.panel-hint { font-size:11px; color:var(--gray-600); font-style:italic; margin-right:4px; }
+.panel-chevron { width:22px; height:22px; display:flex; align-items:center; justify-content:center; transition:transform .25s cubic-bezier(.4,0,.2,1); color:var(--blue-dark); flex-shrink:0; }
+.panel.is-mg .panel-chevron { color:var(--gold-dark); }
+.panel.is-hybrid .panel-chevron { color:var(--hybrid); }
+.panel.is-open .panel-chevron { transform:rotate(180deg); }
+.panel-body { max-height:0; overflow:hidden; transition:max-height .35s cubic-bezier(.4,0,.2,1); }
+.panel.is-open .panel-body { max-height:3000px; }
+.panel-inner { padding:16px 18px 18px; }
+
+/* Tabs */
+.cmp-tabs { display:flex; gap:4px; border-bottom:1.5px solid var(--gray-100); margin-bottom:16px; flex-wrap:wrap; }
+.cmp-tab { font-family:var(--font); font-size:12.5px; font-weight:500; color:var(--gray-600); background:transparent; border:none; padding:10px 16px; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1.5px; transition:color .15s,border-color .15s; letter-spacing:.01em; display:flex; align-items:center; gap:6px; }
+.cmp-tab:hover { color:var(--blue-dark); }
+.panel.is-mg .cmp-tab:hover { color:var(--gold-dark); }
+.cmp-tab.active { color:var(--blue-dark); border-bottom-color:var(--blue); font-weight:600; background:var(--blue-bg); }
+.panel.is-mg .cmp-tab.active { color:var(--gold-dark); border-bottom-color:var(--gold); background:var(--gold-bg); }
+.cmp-tab-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.dot-core { background:#2E7D5C; } .dot-persona { background:#6B3FA0; }
+.cmp-content { display:none; }
+.cmp-content.active { display:block; animation:fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+
+/* Level Definition content */
+.ld-mantra { font-style:italic; font-size:13.5px; color:var(--gray-600); padding:11px 14px; background:var(--blue-bg); border-left:3px solid var(--blue); border-radius:4px; margin-bottom:14px; line-height:1.55; }
+.panel.is-mg .ld-mantra { background:var(--gold-bg); border-left-color:var(--gold); }
+.ld-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.ld-grid.cols-2 { grid-template-columns:repeat(2,1fr); }
+.ld-dim { background:var(--gray-50); border-radius:var(--radius-sm); padding:11px 13px; border:1px solid var(--gray-100); }
+.ld-dim-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:var(--blue); margin-bottom:5px; }
+.panel.is-mg .ld-dim-label { color:var(--gold-dark); }
+.ld-dim-text { font-size:12px; color:var(--gray-600); line-height:1.55; }
+
+/* Competencies cards */
+.cmp-grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.cmp-grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.cmp-card { background:var(--gray-50); border-radius:var(--radius-sm); padding:12px 14px; border:1px solid var(--gray-100); border-left:3px solid #2E7D5C; }
+.cmp-card.persona { border-left-color:#6B3FA0; }
+.cmp-card-label { font-size:11.5px; font-weight:600; color:#2E7D5C; margin-bottom:7px; line-height:1.3; }
+.cmp-card.persona .cmp-card-label { color:#6B3FA0; }
+.cmp-bullets { margin:0; padding-left:16px; list-style:disc; }
+.cmp-bullets li { font-size:11.5px; color:var(--gray-600); line-height:1.55; margin-bottom:4px; }
+.cmp-bullets li:last-child { margin-bottom:0; }
+
+/* JOURNEY */
+.journey-card { background:var(--blue); border-radius:var(--radius); padding:20px 24px 18px; margin-bottom:16px; position:relative; overflow:hidden; }
+.journey-card.is-mg { background:var(--gold-dark); }
+.journey-card.is-hybrid { background:var(--hybrid); }
+.journey-card .blob { background:rgba(255,255,255,0.06); }
+.journey-card .jb1 { width:160px; height:120px; top:-30px; right:40px; border-radius:50% 40% 60% 50%; }
+.journey-card .jb2 { width:80px; height:80px; bottom:-20px; left:20px; border-radius:40% 60% 50% 60%; }
+.journey-deco { position:absolute; right:20px; bottom:10px; opacity:0.3; }
+.journey-label { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,0.6); margin-bottom:14px; position:relative; z-index:1; }
+.journey { display:flex; align-items:center; gap:0; overflow-x:auto; padding-bottom:2px; position:relative; z-index:1; }
+.jstep { display:flex; flex-direction:column; align-items:center; flex-shrink:0; cursor:pointer; transition:transform .15s; }
+.jstep:hover { transform:translateY(-2px); } .jstep:hover .jcircle { box-shadow:0 4px 12px rgba(0,0,0,0.18); }
+.jcircle { width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:500; flex-shrink:0; transition:box-shadow .15s; }
+.j-past { background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.5); border:1.5px solid rgba(255,255,255,0.2); }
+.j-current { background:var(--white); color:var(--blue); border:2px solid var(--white); font-weight:600; }
+.j-next { background:rgba(255,255,255,0.25); color:var(--white); border:2px solid rgba(255,255,255,0.5); }
+.j-future { background:transparent; color:rgba(255,255,255,0.35); border:1.5px dashed rgba(255,255,255,0.2); }
+.jcircle.j-mg { background:rgba(255,255,255,0.2); color:rgba(255,255,255,0.85); border-color:rgba(255,255,255,0.35); }
+.jcircle.j-mg.j-current { background:var(--white); color:var(--gold-dark); border:2px solid var(--white); }
+.jcircle.j-hybrid { background:rgba(255,255,255,0.18); color:rgba(255,255,255,0.9); border:1.5px dashed rgba(255,255,255,0.45); }
+.jcircle.j-hybrid.j-current { background:var(--white); color:var(--hybrid); border:2px solid var(--white); border-style:solid; }
+.jlabel { font-size:10px; color:rgba(255,255,255,0.5); text-align:center; margin-top:6px; max-width:80px; line-height:1.3; }
+.jlabel.current { color:var(--white); font-weight:500; } .jlabel.next { color:rgba(255,255,255,0.75); }
+.jarrow { width:24px; height:2px; background:rgba(255,255,255,0.2); flex-shrink:0; position:relative; margin-bottom:20px; }
+.jarrow::after { content:''; position:absolute; right:-5px; top:-4px; border-left:8px solid rgba(255,255,255,0.2); border-top:5px solid transparent; border-bottom:5px solid transparent; }
+.jarrow.active { background:rgba(255,255,255,0.5); } .jarrow.active::after { border-left-color:rgba(255,255,255,0.5); }
+
+/* Paths (alternative growth options) */
+.paths-row { margin-top:14px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.15); display:flex; flex-wrap:wrap; align-items:center; gap:8px; position:relative; z-index:1; }
+.paths-label { font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:rgba(255,255,255,0.7); margin-right:4px; }
+.path-pill { font-size:11.5px; font-weight:500; color:var(--white); background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.3); padding:5px 11px; border-radius:14px; cursor:pointer; transition:background .15s,border-color .15s; font-family:var(--font); display:inline-flex; align-items:center; gap:6px; }
+.path-pill:hover { background:rgba(255,255,255,0.3); border-color:rgba(255,255,255,0.55); }
+.path-pill-note { font-size:10px; color:rgba(255,255,255,0.7); font-style:italic; }
+.lateral-pill { font-size:11px; color:var(--white); background:rgba(255,255,255,0.1); border:1px dashed rgba(255,255,255,0.4); padding:4px 10px; border-radius:14px; cursor:pointer; font-family:var(--font); }
+.lateral-pill:hover { background:rgba(255,255,255,0.2); }
+.lateral-label { font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:rgba(255,255,255,0.55); margin-right:4px; }
+
+/* Gate banner (shown when a gated/aspirational role is selected) */
+.gate-banner { display:flex; align-items:flex-start; gap:12px; background:linear-gradient(90deg,#FFF6E6 0%,var(--white) 70%); border:1px dashed var(--gold); border-radius:var(--radius-sm); padding:12px 14px 12px 16px; margin-bottom:14px; }
+.gate-banner-icon { color:var(--gold-dark); flex-shrink:0; margin-top:1px; }
+.gate-banner-text { flex:1; min-width:0; }
+.gate-banner-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--gold-dark); margin-bottom:3px; }
+.gate-banner-body { font-size:12.5px; color:var(--gray-600); line-height:1.55; }
+.gate-banner-body strong { color:var(--gray-900); font-weight:600; }
+
+/* KPI strip */
+.kpi-strip { margin-bottom:18px; }
+.timeline-banner { display:flex; align-items:center; gap:14px; background:linear-gradient(90deg,var(--blue-bg) 0%,var(--white) 60%); border:1px solid var(--blue-pale); border-radius:var(--radius-sm); padding:12px 16px; }
+.is-mg .timeline-banner { background:linear-gradient(90deg,var(--gold-bg) 0%,var(--white) 60%); border-color:var(--gold-light); }
+.is-hybrid .timeline-banner { background:linear-gradient(90deg,var(--hybrid-bg) 0%,var(--white) 60%); border-color:var(--hybrid-light); }
+.timeline-icon { color:var(--blue-dark); flex-shrink:0; display:flex; align-items:center; justify-content:center; width:34px; height:34px; background:var(--white); border-radius:50%; border:1px solid var(--blue-pale); }
+.is-mg .timeline-icon { color:var(--gold-dark); border-color:var(--gold); }
+.is-hybrid .timeline-icon { color:var(--hybrid); border-color:var(--hybrid-light); }
+.timeline-text { flex:1; min-width:0; }
+.timeline-row { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+.timeline-label { font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--blue-dark); padding:2px 8px; background:var(--white); border:1px solid var(--blue-pale); border-radius:10px; }
+.is-mg .timeline-label { color:var(--gold-dark); border-color:var(--gold); }
+.is-hybrid .timeline-label { color:var(--hybrid); border-color:var(--hybrid-light); }
+.timeline-value { font-size:14px; font-weight:600; color:var(--gray-900); }
+.timeline-caption { font-size:11.5px; color:var(--gray-600); margin-top:4px; line-height:1.5; }
+.timeline-caption strong { font-weight:600; color:var(--gray-900); }
+
+/* Role summary */
+.role-summary { background:var(--white); border:1px solid var(--gray-100); border-radius:var(--radius-sm); padding:14px 16px; margin-bottom:18px; font-size:13.5px; color:var(--gray-600); line-height:1.6; border-left:3px solid var(--blue); }
+.role-summary strong { color:var(--blue-dark); font-weight:500; display:block; margin-bottom:3px; }
+.role-summary.is-mg { border-left-color:var(--gold); }
+.role-summary.is-mg strong { color:var(--gold-dark); }
+.role-summary.is-hybrid { border-left-color:var(--hybrid); }
+.role-summary.is-hybrid strong { color:var(--hybrid); }
+
+/* Role competencies */
+.legend { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:12px; }
+.leg { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--gray-600); }
+.ldot { width:9px; height:9px; border-radius:3px; flex-shrink:0; }
+/* ── NEW: Intro panel — how to navigate the compass, org structure, key concepts ── */
+.intro-panel {
+  background: white;
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius);
+  padding: 24px 26px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.intro-panel::before {
+  content: ''; position: absolute; top: -40px; right: -40px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: rgba(201, 169, 110, 0.05); pointer-events: none;
+}
+.intro-header {
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--gray-100);
+  position: relative; z-index: 1;
+}
+.intro-title {
+  font-size: 22px; font-weight: 500;
+  color: var(--gray-900); margin-bottom: 5px;
+  letter-spacing: -0.01em;
+}
+.intro-subtitle {
+  font-size: 13.5px; color: var(--gray-600); line-height: 1.55;
+  max-width: 720px;
+}
+.intro-section {
+  margin-bottom: 22px;
+  position: relative; z-index: 1;
+}
+.intro-section:last-child { margin-bottom: 0; }
+.intro-section-title {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--blue-darker); margin-bottom: 12px;
+}
+.intro-section-icon {
+  width: 24px; height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--blue-bg); border-radius: 50%;
+  color: var(--blue-dark);
+}
+
+/* Steps */
+.intro-steps {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  list-style: none; counter-reset: step-counter;
+  padding: 0; margin: 8px 0 0;
+}
+.intro-step {
+  background: var(--gray-50); border: 1px solid var(--gray-100);
+  border-radius: var(--radius-sm); padding: 14px 14px 13px;
+  font-size: 12.5px; color: var(--gray-600); line-height: 1.55;
+  position: relative; counter-increment: step-counter;
+}
+.intro-step::before {
+  content: counter(step-counter);
+  position: absolute; top: -10px; left: 12px;
+  background: var(--blue); color: white;
+  width: 22px; height: 22px; border-radius: 50%;
+  font-size: 11px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid white;
+}
+.intro-step strong { color: var(--gray-900); font-weight: 500; }
+
+/* Tracks (IC vs Manager) */
+.intro-tracks {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.intro-track {
+  background: var(--gray-50); border: 1px solid var(--gray-100);
+  border-left: 3px solid var(--blue);
+  border-radius: var(--radius-sm); padding: 13px 15px;
+}
+.intro-track.is-mg { border-left-color: var(--gold); }
+.intro-track-title {
+  font-size: 12.5px; font-weight: 500;
+  color: var(--gray-900); margin-bottom: 5px;
+}
+.intro-track-body {
+  font-size: 12px; color: var(--gray-600); line-height: 1.55;
+}
+/* Paths container when inside intro gets top margin */
+.intro-section .paths-container {
+  margin-top: 18px;
+}
+
+/* Concept cards */
+.intro-concepts {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+}
+.intro-concept {
+  background: var(--gray-50); border: 1px solid var(--gray-100);
+  border-radius: var(--radius-sm); padding: 13px 15px;
+}
+.intro-concept-title {
+  font-size: 12.5px; font-weight: 500;
+  color: var(--gray-900); margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+.intro-concept-where {
+  font-size: 9.5px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  background: #EEF4FF; color: #2D58B8;
+  padding: 1px 6px; border-radius: 8px; white-space: nowrap;
+}
+.intro-concept-where.is-side { background: var(--gold-light); color: #6B4F1A; }
+.intro-concept-body {
+  font-size: 11.5px; color: var(--gray-600); line-height: 1.55;
+}
+.intro-concept-body strong { color: var(--gray-900); font-weight: 500; }
+.intro-section-ref { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--gray-100); }
+.intro-section-ref .panel { border: 1px solid var(--gray-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.intro-concept-where.is-below { background: #F0F4FF; color: #3D63C4; }
+
+/* Section intro paragraphs before major content blocks */
+.section-intro {
+  font-size: 13px; color: var(--gray-600); line-height: 1.6;
+  margin-bottom: 12px; max-width: 820px;
+}
+.section-intro-last { margin-top: 32px; padding-top: 28px; border-top: 2px solid var(--gray-100); }
+
+/* ── Progress sections: vertical flow with clear headers ── */
+.progress-section {
+  background: white;
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+  border-left: 4px solid var(--blue);
+}
+.progress-section-next {
+  border-left-color: var(--gold);
+}
+.progress-section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--gray-100);
+}
+.progress-section-icon {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  background: var(--blue-bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--blue-dark);
+}
+.progress-section-next .progress-section-icon {
+  background: var(--gold-light);
+  color: #6B4F1A;
+}
+.progress-section-text {
+  flex: 1;
+}
+.progress-section-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+.progress-section-sub {
+  font-size: 14px;
+  color: var(--gray-500);
+  line-height: 1.5;
+}
+.progress-section .kpi-strip {
+  margin-bottom: 0;
+}
+.progress-section .section-intro {
+  margin-bottom: 18px;
+}
+.progress-section .journey-card {
+  margin-bottom: 20px;
+}
+
+/* ── Section headers for "where you are" and "what you can be" ── */
+.current-level-header, .next-step-header {
+  display: flex; align-items: center; gap: 14px;
+  background: white; border: 1px solid var(--gray-100);
+  border-radius: var(--radius-sm); padding: 16px 18px;
+  margin: 20px 0 16px;
+  border-left: 3px solid var(--blue);
+}
+.next-step-header { border-left-color: var(--gold); margin-top: 32px; }
+.current-level-icon, .next-step-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: var(--blue-bg); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--blue-dark);
+}
+.next-step-icon { background: var(--gold-light); color: #6B4F1A; }
+.current-level-text, .next-step-text { flex: 1; }
+.current-level-title, .next-step-title {
+  font-size: 16px; font-weight: 600; color: var(--gray-900);
+  margin-bottom: 3px; letter-spacing: -0.01em;
+}
+.current-level-sub, .next-step-sub {
+  font-size: 13px; color: var(--gray-600); line-height: 1.5;
+}
+
+/* ── What's Next "to be defined" state ── */
+.whats-next-tbd {
+  text-align: center;
+  padding: 32px 24px;
+  background: var(--gray-50);
+  border: 1px dashed var(--gray-200);
+  border-radius: var(--radius-sm);
+}
+.whats-next-tbd-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-400);
+  border: 2px solid var(--gray-200);
+}
+.whats-next-tbd-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--gray-600);
+  margin-bottom: 10px;
+}
+.whats-next-tbd-body {
+  font-size: 13px;
+  color: var(--gray-500);
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.comparison { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.comparison.single-col { grid-template-columns:1fr; max-width:760px; margin:0 auto; }
+
+/* ── NEW: "What's Next" panel — the user's main question answered prominently ── */
+.whats-next-panel {
+  background: linear-gradient(135deg, #F5F0E5 0%, #FAF6EC 60%, #FFFFFF 100%);
+  border: 1px solid var(--gold-light);
+  border-radius: var(--radius);
+  padding: 22px 26px 24px;
+  margin: 16px 0 20px;
+  position: relative;
+  overflow: hidden;
+}
+.whats-next-panel::before {
+  content: ''; position: absolute; top: -20px; right: -20px;
+  width: 160px; height: 160px; border-radius: 50%;
+  background: rgba(201, 169, 110, 0.06); pointer-events: none;
+}
+.whats-next-label {
+  font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--gold); margin-bottom: 6px;
+  position: relative; z-index: 1;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.whats-next-label::before {
+  content: '→'; font-size: 14px;
+}
+.whats-next-title {
+  font-size: 22px; font-weight: 500; color: var(--gray-900);
+  margin-bottom: 4px; line-height: 1.25; position: relative; z-index: 1;
+}
+.whats-next-level-pill {
+  display: inline-block; font-size: 11px; font-weight: 500;
+  background: var(--gray-900); color: white;
+  padding: 3px 10px; border-radius: 12px;
+  margin-left: 6px; vertical-align: middle;
+}
+.whats-next-summary {
+  font-size: 13.5px; color: var(--gray-600);
+  line-height: 1.6; margin-top: 8px; margin-bottom: 18px;
+  position: relative; z-index: 1; max-width: 700px;
+}
+.whats-next-shifts {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;
+  margin-bottom: 16px;
+}
+.shift-card {
+  background: rgba(255, 255, 255, 0.7); border: 1px solid var(--gold-light);
+  border-radius: 10px; padding: 11px 14px;
+  font-size: 12.5px; color: var(--gray-900); line-height: 1.5;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.shift-card-icon {
+  flex-shrink: 0; color: var(--gold); font-size: 14px;
+  font-weight: 600; line-height: 1.4;
+}
+.whats-next-focus {
+  position: relative; z-index: 1;
+  padding-top: 14px; border-top: 1px solid var(--gold-light);
+}
+.whats-next-focus-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--gray-600); margin-bottom: 8px;
+}
+.whats-next-focus-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.focus-tag {
+  font-size: 12px; font-weight: 500;
+  background: white; border: 1px solid var(--gold);
+  color: #6B4F1A; padding: 5px 11px; border-radius: 14px;
+}
+
+/* ── NEW: Competency type legend (replaces outbound/inbound dots) ── */
+.rc-legend-intro {
+  font-size: 12.5px; color: var(--gray-600); line-height: 1.6;
+  margin-bottom: 16px; padding: 12px 14px;
+  background: var(--gray-50); border-radius: var(--radius-sm);
+  border-left: 3px solid var(--blue);
+}
+.legend-cards-static {
+  display: grid; grid-template-columns: 1fr; gap: 12px;
+}
+.legend-cards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin: 16px 0 20px;
+}
+.legend-card {
+  background: white; border: 1px solid var(--gray-100);
+  border-radius: var(--radius-sm); padding: 14px 16px;
+  border-left: 3px solid var(--gray-200);
+}
+.legend-card.lc-u { border-left-color: #7BA3EF; }
+.legend-card.lc-r { border-left-color: #507FE6; }
+.legend-card.lc-s { border-left-color: var(--gold); }
+.legend-card-title {
+  font-size: 12.5px; font-weight: 600; color: var(--gray-900);
+  margin-bottom: 4px; display: flex; align-items: center; gap: 6px;
+}
+.legend-card-tag {
+  font-size: 9.5px; font-weight: 500; text-transform: uppercase;
+  letter-spacing: 0.06em; padding: 1px 6px; border-radius: 8px;
+}
+.legend-card.lc-u .legend-card-tag { background: #EEF4FF; color: #2D58B8; }
+.legend-card.lc-r .legend-card-tag { background: #EDF4FF; color: var(--blue-darker); }
+.legend-card.lc-s .legend-card-tag { background: #FFF8ED; color: #7A4F00; }
+.legend-card-body {
+  font-size: 11.5px; color: var(--gray-600); line-height: 1.55;
+  margin-bottom: 8px;
+}
+.legend-card-examples {
+  font-size: 10.5px; color: var(--gray-400); line-height: 1.5;
+  font-style: italic;
+}
+.legend-card-examples strong { font-weight: 500; color: var(--gray-600); font-style: normal; }
+
+/* ── NEW: Competency groups (replaces flat comparison) ── */
+.comp-groups { display: flex; flex-direction: column; gap: 22px; }
+.comp-group { background: white; border: 1px solid var(--gray-100); border-radius: var(--radius-sm); overflow: hidden; }
+.comp-group-header {
+  padding: 11px 16px; display: flex; align-items: center;
+  gap: 10px; font-size: 12px; font-weight: 500;
+  border-bottom: 1px solid var(--gray-100);
+}
+.comp-group.cg-u .comp-group-header { background: #EEF4FF; color: #2D58B8; }
+.comp-group.cg-r .comp-group-header { background: #EDF4FF; color: var(--blue-darker); }
+.comp-group.cg-s .comp-group-header { background: #FFF8ED; color: #7A4F00; }
+.comp-group-count {
+  font-size: 11px; font-weight: 400; opacity: 0.7;
+  margin-left: auto;
+}
+.comp-group-hint {
+  font-size: 11px; font-weight: 400; opacity: 0.75;
+}
+.comp-group-body { padding: 0; }
+.comp-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.comp-comparison.single-col { grid-template-columns: 1fr; }
+.comp-comparison-col-header {
+  padding: 8px 14px; font-size: 10.5px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  background: var(--gray-50); color: var(--gray-600);
+  border-bottom: 1px solid var(--gray-100);
+}
+.comp-comparison-col-header.is-now { color: var(--blue-dark); }
+.comp-comparison-col-header.is-next { color: var(--gold); border-left: 1px solid var(--gray-100); }
+.comp-comparison-col-body { padding: 0; }
+.comp-row-new {
+  padding: 10px 14px; border-bottom: 1px solid var(--gray-100);
+  font-size: 12.5px; line-height: 1.5;
+}
+.comp-row-new:last-child { border-bottom: none; }
+.comp-comparison-col-body.is-next .comp-row-new { border-left: 1px solid var(--gray-100); color: var(--gray-600); }
+.comp-row-name {
+  font-size: 12px; font-weight: 500; color: var(--gray-900);
+  margin-bottom: 3px;
+}
+.comp-row-desc { font-size: 12px; color: var(--gray-600); line-height: 1.55; }
+.comp-row-desc.is-empty { color: var(--gray-400); font-style: italic; }
+.comp-row-desc.is-tbd { color: var(--gray-400); font-style: italic; font-size: 11.5px; }
+.col-header { padding:10px 14px; border-radius:var(--radius-sm) var(--radius-sm) 0 0; font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.05em; }
+.col-now { background:var(--blue); color:var(--white); }
+.col-now.is-mg { background:var(--gold-dark); }
+.col-now.is-hybrid { background:var(--hybrid); }
+.col-next { background:var(--blue-pale); color:var(--blue-dark); }
+.col-next.is-terminal { background:var(--gray-100); color:var(--gray-600); font-style:italic; }
+.col-body { border:1px solid var(--gray-100); border-top:none; border-radius:0 0 var(--radius-sm) var(--radius-sm); background:var(--white); }
+.comp-row { padding:11px 14px; border-bottom:1px solid var(--gray-100); }
+.comp-row:last-child { border-bottom:none; }
+.comp-name { font-size:12.5px; font-weight:500; color:var(--gray-900); margin-bottom:4px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.comp-desc { font-size:12px; color:var(--gray-600); line-height:1.55; }
+.comp-na { font-size:12px; color:var(--gray-400); font-style:italic; }
+.badge { font-size:10px; padding:2px 7px; border-radius:10px; font-weight:400; white-space:nowrap; }
+.b-u { background:var(--blue-bg); color:var(--blue-dark); }
+.b-r { background:#EDF4FF; color:var(--blue-darker); border:1px solid var(--blue-pale); }
+.b-s { background:var(--gold-bg); color:var(--gold-dark); }
+.b-new { background:var(--gold-light); color:var(--gold-dark); font-weight:500; }
+.b-out { background:#FFE8D9; color:#A04A1A; border:1px solid #F2A876; font-weight:500; }
+.b-in  { background:#D9F0E5; color:#1A6B43; border:1px solid #76C29E; font-weight:500; }
+
+@media (max-width:850px) {
+  .paths-container { grid-template-columns:1fr; }
+  .ld-grid,.ld-grid.cols-2,.cmp-grid-2,.cmp-grid-3 { grid-template-columns:1fr; }
+  .kpi-strip { grid-template-columns:repeat(2,1fr); }
+  .legend-cards { grid-template-columns:1fr; }
+  .intro-steps, .intro-tracks, .intro-concepts { grid-template-columns: 1fr; }
+}
+@media (max-width:700px) {
+  .comparison { grid-template-columns:1fr; }
+  .comp-comparison { grid-template-columns:1fr; }
+  .comp-comparison-col-body.is-next .comp-row-new { border-left: none; border-top: 1px dashed var(--gray-100); }
+  .header-inner { padding:14px 20px; }
+  .container { padding:16px 16px 40px; }
+  .gate-card { padding:32px 24px 28px; }
+  .panel-hint { display:none; }
+  .kpi-strip { grid-template-columns:1fr; }
+  .whats-next-title { font-size: 18px; }
+  .whats-next-panel { padding: 18px 18px 20px; }
+}
+.tl-steps { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:18px; }
+.tl-step { background:var(--white); border:1px solid var(--gray-100); border-radius:var(--radius-sm); padding:12px; }
+.tl-step.is-current { border:2px solid var(--blue); }
+.tl-step.is-next { border:2px dashed var(--blue-light); }
+.tl-lv { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:.06em; color:var(--gray-400); margin-bottom:4px; }
+.tl-step.is-current .tl-lv, .tl-step.is-next .tl-lv { color:var(--blue); }
+.tl-name { font-size:12.5px; font-weight:500; margin-bottom:6px; color:var(--gray-900); }
+.tl-desc { font-size:11.5px; color:var(--gray-600); line-height:1.5; }
+.tl-sub { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.08em; color:var(--gray-400); margin-bottom:8px; }
+.tl-table { width:100%; border-collapse:collapse; font-size:12px; background:var(--white); }
+.tl-table th { text-align:left; background:var(--blue-pale); color:var(--blue-dark); font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.05em; padding:9px 12px; }
+.tl-table td { padding:10px 12px; border-top:1px solid var(--gray-100); vertical-align:top; color:var(--gray-600); line-height:1.55; }
+.tl-table td:first-child { font-weight:500; color:var(--gray-900); width:16%; }
+.tl-table td:last-child { width:28%; }
+@media (max-width:700px) { .tl-steps { grid-template-columns:1fr; } }
+.cc-cell { border-bottom: 1px solid var(--gray-100); }
+.cc-cell.is-next { border-left: 1px solid var(--gray-100); }
+.comp-comparison > .cc-cell:nth-last-child(-n+2) { border-bottom: none; }
+.cc-cell .comp-row-new { border: none; height: 100%; }
+@media (max-width:700px) { .cc-cell.is-next { border-left: none; } }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-bg">
+    <div class="gate-blob gb1"></div><div class="gate-blob gb2"></div><div class="gate-blob gb3"></div>
+    <svg class="gate-deco-tl" width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M24 3 L26 22 L45 24 L26 26 L24 45 L22 26 L3 24 L22 22 Z" stroke="#C9A96E" stroke-width="1" fill="none"/></svg>
+    <svg class="gate-deco-br" width="80" height="40" viewBox="0 0 80 40" fill="none"><path d="M4 20 Q20 4 40 20 Q60 36 76 20" stroke="#C9A96E" stroke-width="1" fill="none"/><path d="M12 28 Q28 12 48 28" stroke="#C9A96E" stroke-width="0.8" fill="none" opacity="0.5"/></svg>
+  </div>
+  <div class="gate-card">
+    <div class="gate-logo">amenitiz</div>
+    <div class="gate-title">Career Compass</div>
+    <div class="gate-sub">Sign in with your Amenitiz email to access your career framework.</div>
+    <div class="gate-field"><label class="gate-label" for="gate-email">Work email</label><input class="gate-input" type="email" id="gate-email" placeholder="you@amenitiz.com" autocomplete="email"></div>
+    <div class="gate-field"><label class="gate-label" for="gate-password">Password</label><input class="gate-input" type="password" id="gate-password" placeholder="••••••••••••" autocomplete="current-password"></div>
+    <div class="gate-error" id="gate-error"></div>
+    <button class="gate-btn" id="gate-submit">Access Career Compass</button>
+    <div class="gate-hint">Access restricted to @amenitiz.com accounts</div>
+  </div>
+</div>
+
+<div id="app">
+<header>
+  <div class="header-bg">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+    <svg class="deco-svg" width="60" height="60" viewBox="0 0 60 60" fill="none"><path d="M30 4 L32 28 L56 30 L32 32 L30 56 L28 32 L4 30 L28 28 Z" stroke="#C9A96E" stroke-width="1" fill="none" opacity="0.6"/></svg>
+  </div>
+  <div class="header-inner">
+    <div class="logo">amenitiz</div>
+    <div class="header-right">
+      <div class="header-tag">career compass — ai operations</div>
+      <button class="logout-btn" id="logout-btn">sign out</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- 1) INTRO PANEL — how to use the compass -->
+  <div class="intro-panel">
+    <div class="intro-header">
+      <div class="intro-title">Career Compass — AI Operations</div>
+      <div class="intro-subtitle">A clear view of where you are in your career, where you can grow next, and what's expected at every step.</div>
+    </div>
+
+    <div class="intro-section">
+      <div class="intro-section-title">
+        <span class="intro-section-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        </span>
+        How to navigate the compass
+      </div>
+      <ol class="intro-steps">
+        <li class="intro-step"><strong>Pick your role.</strong> Click any role card in the IC or Manager grid below. The compass adapts to show what's expected at your level.</li>
+        <li class="intro-step"><strong>Explore your path.</strong> See where you are now, what comes next in your career, and which competencies define the progression.</li>
+        <li class="intro-step"><strong>Use the reference.</strong> Level definitions and Core Competencies (universal across Amenitiz) are available in the reference panels below.</li>
+      </ol>
+    </div>
+
+    <div class="intro-section">
+      <div class="intro-section-title">
+        <span class="intro-section-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </span>
+        Your organizational structure
+      </div>
+      <div class="intro-tracks">
+        <div class="intro-track">
+          <div class="intro-track-title">Individual Contributor (IC)</div>
+          <div class="intro-track-body">One IC track: AI Operations, from AI Operations Manager (IC4) to AI Operations Senior Manager (IC5). Scope is the business departments (Sales, CS, Onboarding, Care, Finance, HR); Product and Tech are out of scope.</div>
+        </div>
+        <div class="intro-track is-mg">
+          <div class="intro-track-title">Manager track</div>
+          <div class="intro-track-body">Not open yet. The AI Ops Team Lead (M3) opens once the first AI Ops team members are hired, as an optional path, not the only one.</div>
+        </div>
+      </div>
+      
+      <!-- Role selector grid integrated here -->
+      <div class="paths-container" id="pathsContainer"></div>
+    </div>
+
+    <div class="intro-section">
+      <div class="intro-section-title">
+        <span class="intro-section-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        What you need to know
+      </div>
+      <div class="intro-concepts">
+        <div class="intro-concept">
+          <div class="intro-concept-title">Level Definition <span class="intro-concept-where is-below">below</span></div>
+          <div class="intro-concept-body">Each level (IC2, IC3, M3, etc.) has a clear scope and impact expectation. <strong>Universal across Amenitiz</strong> — an IC4 in AI Operations maps to an IC4 anywhere else in the company.</div>
+        </div>
+        <div class="intro-concept">
+          <div class="intro-concept-title">Core Competencies <span class="intro-concept-where is-below">below</span></div>
+          <div class="intro-concept-body">Five company-wide behaviours expected of everyone. They appear in every performance review and evolve in expectation as you grow in level.</div>
+        </div>
+        <div class="intro-concept">
+          <div class="intro-concept-title">Role Competencies <span class="intro-concept-where is-below">below</span></div>
+          <div class="intro-concept-body">Specific to your role and track — the technical and leadership skills that define excellence in your discipline. Grouped by type: Universal, Role-specific, Seniority-gated.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REFERENCE: Level Definition (inside intro panel) -->
+    <div class="intro-section intro-section-ref">
+      <div class="panel" id="ldPanel">
+        <div class="panel-header" data-target="ldPanel">
+          <span class="panel-icon">Level Definition</span>
+          <span class="panel-title" id="ldTitle"></span>
+          <span class="panel-chevron"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="panel-body"><div class="panel-inner" id="ldInner"></div></div>
+      </div>
+    </div>
+
+    <!-- REFERENCE: Core Competencies (inside intro panel) -->
+    <div class="intro-section intro-section-ref">
+      <div class="panel" id="cmpPanel">
+        <div class="panel-header" data-target="cmpPanel">
+          <span class="panel-icon">Core Competencies</span>
+          <span class="panel-title" id="cmpTitle"></span>
+          <span class="panel-chevron"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="panel-body"><div class="panel-inner"><div class="cmp-tabs" id="cmpTabs"></div><div id="cmpContents"></div></div></div>
+      </div>
+    </div>
+
+    <!-- REFERENCE: Role Competencies explanation (inside intro panel) -->
+    <div class="intro-section intro-section-ref">
+      <div class="panel" id="rcPanel">
+        <div class="panel-header" data-target="rcPanel">
+          <span class="panel-icon">Role Competencies — Understanding the types</span>
+          <span class="panel-chevron"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="panel-body">
+          <div class="panel-inner">
+            <div class="rc-legend-intro">Role competencies are grouped by type to help you understand what's expected universally, what's specific to your craft, and what unlocks as you grow in seniority.</div>
+            <div class="legend-cards-static">
+              <div class="legend-card lc-u">
+                <div class="legend-card-title">The foundations <span class="legend-card-tag">universal</span></div>
+                <div class="legend-card-body">Expected at every role at Amenitiz, regardless of track or seniority. The company's shared baseline — what makes someone effective here, no matter what they do.</div>
+                <div class="legend-card-examples"><strong>Examples:</strong> Analytical Thinking</div>
+              </div>
+              <div class="legend-card lc-r">
+                <div class="legend-card-title">Your craft <span class="legend-card-tag">role-specific</span></div>
+                <div class="legend-card-body">The technical and functional skills unique to your discipline. As you grow within a track, you go deeper here — this is what defines your expertise.</div>
+                <div class="legend-card-examples"><strong>Examples:</strong> AI Tooling, Systems Thinking, Security, Observability</div>
+              </div>
+              <div class="legend-card lc-s">
+                <div class="legend-card-title">Leadership edge <span class="legend-card-tag">seniority-gated</span></div>
+                <div class="legend-card-body">Unlock as you grow into broader scope — typically from IC3 upward. About influence, mentorship and strategy. Often the difference between executing well and leading a function.</div>
+                <div class="legend-card-examples"><strong>Examples:</strong> Relationship Management, AI Economics, Sponsorship</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- REFERENCE: Technical Ladder (AI Ops) -->
+    <div class="intro-section intro-section-ref">
+      <div class="panel" id="tlPanel">
+        <div class="panel-header" data-target="tlPanel">
+          <span class="panel-icon">Technical Ladder — from vibe coding to agentic engineering</span>
+          <span class="panel-chevron"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="panel-body"><div class="panel-inner">
+          <div class="tl-steps"><div class="tl-step" data-level="Below"><div class="tl-lv">Below IC2</div><div class="tl-name">Vibe coding</div><div class="tl-desc">Prompts an AI tool until something works. Does not read or understand the output. No version control, no tests, one-off scripts that break silently.</div></div><div class="tl-step" data-level="IC2"><div class="tl-lv">IC2</div><div class="tl-name">AI-assisted building</div><div class="tl-desc">Reads and understands every line the AI writes. Uses Git, basic tests and error handling. Ships low-code and code workflows that others use.</div></div><div class="tl-step" data-level="IC3"><div class="tl-lv">IC3</div><div class="tl-name">Production automation (Judge)</div><div class="tl-desc">Owns systems in production: deployment, secrets, retries, idempotency, logging, alerting, runbooks. Catches hallucinated APIs, wrong logic and security issues in AI output. Knows when to stop prompting and write it herself.</div></div><div class="tl-step" data-level="IC4"><div class="tl-lv">IC4</div><div class="tl-name">Agent design (Elevate, Design)</div><div class="tl-desc">Designs LLM pipelines and agents: tool use, structured outputs, retrieval, human-in-the-loop. Builds evals, guardrails and LLM cost tracking before shipping. Writes specs, context files and prompt patterns others reuse. Makes adopt/kill calls on new capabilities, aligned with the Engineering Platform team.</div></div><div class="tl-step" data-level="IC5"><div class="tl-lv">IC5</div><div class="tl-name">Agentic engineering (Transform)</div><div class="tl-desc">Agents write most of the code; she owns the spec, the architecture, the harness and the review. Work starts from a written spec, runs inside a harness, is blocked by eval gates, and every agent failure becomes a permanent fix to the harness. The AI team builds on her harness, designed with the Engineering Platform team on shared infrastructure (CI, secrets, permissions). Evidence below.</div></div></div>
+          <div class="tl-sub">What agentic engineering (IC5) looks like in practice</div>
+          <table class="tl-table"><thead><tr><th>Element</th><th>Tangible evidence</th><th>How to check</th></tr></thead><tbody><tr><td>Spec before agent</td><td>A spec template lives in the repo: problem, acceptance criteria written as testable statements, out of scope, data touched. Every agent-built change links to its spec. Each acceptance criterion maps to a test or an eval case. Work is cut so one agent run equals one reviewable PR.</td><td>Pick 3 recently merged changes: each links a spec, and each acceptance criterion has a matching test or eval case.</td></tr><tr><td>Agent harness</td><td>Context files and skills are only the starting point. The harness is the infrastructure around the agent:<br>- Sandbox: agents run in an isolated container or dev environment, never on her laptop with her credentials, never against production.<br>- Scoped tools and credentials: an allowlist of tools per agent, read-only by default, write access only to its own branch.<br>- Policy hooks: forbidden actions are blocked before they run (pushing to main, reading secrets, deleting data, calling production APIs).<br>- Verification loop: the agent runs tests, linters and evals itself and iterates until green before it can open a PR.<br>- Budgets: token, time and cost limit per run, with automatic stop.<br>- Traces: every run is logged (prompt, tool calls, diff, cost) and can be replayed.<br>Built on the Engineering Platform team's shared infrastructure (CI, secrets manager, sandboxes).</td><td>Ask her to launch an agent on a real task and show: where it runs, a forbidden action being blocked, the verification loop going red then green, and the run trace with its cost.</td></tr><tr><td>Review she owns</td><td>Agent changes go through the same PR review as human code: branch protection, no direct push, agents never merge their own work. She can explain any merged module; anything she can't explain is rejected. High-risk paths (payments, customer messages, data deletion) need a second reviewer.</td><td>Branch protection settings. Pick a random agent PR and have her walk through it.</td></tr><tr><td>Eval gates</td><td>CI blocks merge on failing tests, type checks, lint and security scans (secrets, dependencies). Each production agent has a versioned eval set built from real cases, including every past failure, run on every prompt, model or tool change. A score below baseline blocks the release. Prompts, model versions and agent configs live in version control, never edited directly in a vendor UI.</td><td>Required checks in the CI config. Score history per agent. The prompt of any live agent can be found in the repo, with its change history.</td></tr><tr><td>Failures compound</td><td>Every agent failure (rejected PR, incident, eval miss) gets an entry in a failure log: what happened, root cause, and the fix applied to the harness (new eval case, new hook rule, updated skill or context). The same failure never happens twice.</td><td>Failure log entries linked to harness commits. Eval set and hook rules growing month over month. Zero repeat failures.</td></tr><tr><td>Event-triggered agents</td><td>At least 2 agents start without a human: on a failed workflow, an alert, a ticket tagged agent-ready, or a schedule. They open a PR or a draft fix for her review, and never merge on their own.</td><td>Run history showing each trigger and the PR it produced.</td></tr><tr><td>Measured like a service</td><td>A monthly view per agent: share of changes merged without revision, time from trigger to PR, cost per run and per month, defects traced to agent changes. A written stop rule, for example pause an agent if its acceptance rate stays below 80% for 2 weeks or it goes over budget.</td><td>The dashboard exists and is part of the monthly leadership report. The stop rule is documented, with its trigger history.</td></tr><tr><td>AI team builds on it</td><td>The harness is a reusable template: a new AI team project starts from it in under a day, with sandbox, hooks, CI gates and eval scaffolding already wired. A new team member ships a first agent-built change through it in their first week without her help.</td><td>Time to bootstrap the last new project. Onboarding record of the last new team member.</td></tr></tbody></table>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <main class="main-content">
+
+      <!-- 4) GATE BANNER -->
+      <div class="gate-banner" id="gateBanner" style="display:none">
+        <div class="gate-banner-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="gate-banner-text">
+          <div class="gate-banner-title" id="gateBannerTitle"></div>
+          <div class="gate-banner-body" id="gateBannerBody"></div>
+        </div>
+      </div>
+
+      <!-- 5) ROLE SUMMARY - hidden, redundant with competencies -->
+      <div class="section-intro" style="display:none">This is where you are right now. Review what's expected at your current level and what makes this role critical to the team.</div>
+      <div class="role-summary" id="roleSummary" style="display:none"></div>
+
+      <!-- SECTION 1: Your current level -->
+      <div class="progress-section">
+        <div class="progress-section-header">
+          <div class="progress-section-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          </div>
+          <div class="progress-section-text">
+            <div class="progress-section-title">Your current level</div>
+            <div class="progress-section-sub">Where you are today</div>
+          </div>
+        </div>
+        
+        <!-- Progression indicator -->
+        <div class="kpi-strip" id="kpiStrip"></div>
+      </div>
+
+      <!-- SECTION 2: Your competencies & progression -->
+      <div class="progress-section">
+        <div class="progress-section-header">
+          <div class="progress-section-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="progress-section-text">
+            <div class="progress-section-title">Your progression path</div>
+            <div class="progress-section-sub">What you do now and what comes next at each competency</div>
+          </div>
+        </div>
+        
+        <div class="section-intro">These are the specific skills and behaviours we expect at your role. Each competency shows where you are now and what's expected at the next level. Used in performance reviews alongside Core Competencies.</div>
+        
+        <!-- Understanding the types (collapsible reference) -->
+        <div class="sec-divider">
+          <span class="sec-pill sec-pill-blue">Role Competencies — Understanding the types</span>
+          <span class="sec-hint">— tap to see how competencies are grouped</span>
+        </div>
+
+        <!-- Competency groups -->
+        <div class="comp-groups" id="compGroups"></div>
+      </div>
+
+      <!-- SECTION 3: Your next role (collapsible/expandable) -->
+      <div class="progress-section progress-section-next">
+        <div class="progress-section-header">
+          <div class="progress-section-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="progress-section-text">
+            <div class="progress-section-title">Your next role</div>
+            <div class="progress-section-sub">Ready to look ahead? Here's the big picture of what changes</div>
+          </div>
+        </div>
+        
+        <!-- Journey path visual -->
+        <div class="journey-card" id="journeyCard" style="display:none">
+          <div class="blob jb1"></div><div class="blob jb2"></div>
+          <svg class="journey-deco" width="50" height="50" viewBox="0 0 50 50" fill="none"><path d="M10 25 Q18 8 25 25 Q32 42 40 25" stroke="#C9A96E" stroke-width="1.2" fill="none"/><path d="M15 35 Q22 18 30 35" stroke="#C9A96E" stroke-width="1" fill="none" opacity="0.5"/></svg>
+          <div class="journey-label">your career path</div>
+          <div class="journey" id="journey"></div>
+          <div class="paths-row" id="pathsRow" style="display:none"></div>
+        </div>
+        
+        <!-- What's Next content -->
+        <div id="whatsNext"></div>
+      </div>
+
+    </main>
+
+</div>
+</div>
+
+<script>
+// ── AUTH ──
+const PASS='Raisethebar', DOMAIN='@amenitiz.com', SESSION_KEY='cc_aiops_auth';
+function checkSession() { return sessionStorage.getItem(SESSION_KEY)==='1'; }
+function unlock() { sessionStorage.setItem(SESSION_KEY,'1'); document.getElementById('gate').classList.add('hidden'); document.getElementById('app').classList.add('visible'); }
+function lock() { sessionStorage.removeItem(SESSION_KEY); document.getElementById('gate').classList.remove('hidden'); document.getElementById('app').classList.remove('visible'); document.getElementById('gate-email').value=''; document.getElementById('gate-password').value=''; document.getElementById('gate-error').textContent=''; }
+document.getElementById('gate-submit').addEventListener('click', function() {
+  const email=document.getElementById('gate-email').value.trim().toLowerCase();
+  const pass=document.getElementById('gate-password').value;
+  const errEl=document.getElementById('gate-error'), emailEl=document.getElementById('gate-email'), passEl=document.getElementById('gate-password');
+  emailEl.classList.remove('error'); passEl.classList.remove('error'); errEl.textContent='';
+  if (!email.endsWith(DOMAIN)) { emailEl.classList.add('error'); errEl.textContent='Please use your @amenitiz.com email address.'; return; }
+  if (pass!==PASS) { passEl.classList.add('error'); errEl.textContent='Incorrect password. Please try again.'; return; }
+  unlock();
+});
+['gate-email','gate-password'].forEach(id => { document.getElementById(id).addEventListener('keydown', function(e) { if (e.key==='Enter') document.getElementById('gate-submit').click(); }); });
+document.getElementById('logout-btn').addEventListener('click', lock);
+if (checkSession()) unlock();
+
+// ── DATA (Marketing v4 — comprehensive) ──
+const roles = {"ic4_ai_ops_mgr": {"label": "AI Operations Manager", "level": "IC4", "track": "IC", "summary": "Sub-discipline expert in AI and automation who shapes how the business departments use them. Owns multi-system initiatives end to end, from discovery to production, makes the architectural decisions on the automation stack, and raises the bar of the teams she works with through example and enablement. Given white space, figures out why, what, and how. <br><br><strong>Scope:<\/strong> business departments (Sales, CS, Onboarding, Care, Finance, HR). Product and Tech are out of scope: AI Ops collaborates with them but has no impact on, and no decision over, their roadmap, stack or standards.", "lateral": null, "competencies": [{"name": "Technical Ladder Stage", "type": "R", "now": "Agent design (Elevate, Design)<br>Designs LLM pipelines and agents: tool use, structured outputs, retrieval, human-in-the-loop. Builds evals, guardrails and LLM cost tracking before shipping. Writes specs, context files and prompt patterns others reuse. Makes adopt/kill calls on new capabilities, aligned with the Engineering Platform team.", "next": "Agentic engineering (Transform)<br>Agents write most of the code; she owns the spec, the architecture, the harness and the review. Work starts from a written spec, runs inside a harness, is blocked by eval gates, and every agent failure becomes a permanent fix to the harness. The AI team builds on her harness, designed with the Engineering Platform team on shared infrastructure (CI, secrets, permissions). Evidence in the Technical ladder tab."}, {"name": "Analytical Thinking", "type": "U", "now": "Defines what to measure for every AI Ops project: baseline, 2 to 3 KPIs, target. Builds dashboards and analyses that drive decisions with department heads and leadership. Anticipates analytical needs before a system ships.", "next": "Defines how the business departments measure the impact of AI. Owns a single impact view (hours reclaimed, revenue protected, cost avoided) that leadership uses to decide where to invest next."}, {"name": "Code Quality & Best Practices", "type": "R", "now": "Establishes the code and workflow standards for the automation stack: Python, SQL, orchestrator flows, prompts. Drives improvement through review, refactoring and tooling. Writes code others can maintain without her.", "next": "Defines the standards the AI team follows when it builds automations or agents, and the guardrails for non-engineers using the AI team's self-serve tools. Her patterns and templates are the AI team's default starting point."}, {"name": "Quality Focus", "type": "R", "now": "Owns quality outcomes of every system she ships. Defines quality processes: testing strategy, LLM evals, post-incident rigour. Measurably reduces failures and manual interventions on business-critical flows.", "next": "Owns quality across the AI team's whole portfolio. Sets the eval and release bar an automation must pass before it touches customers, money or employee data."}, {"name": "Performance Optimization", "type": "R", "now": "Designs workflows and agents with latency, throughput and LLM cost in mind from the start. Owns performance and cost review for business-critical flows. Profiles and benchmarks before optimising.", "next": "Sets performance and cost budgets for the AI team's systems. Identifies and fixes bottlenecks that span several departments or platforms."}, {"name": "Systems Thinking", "type": "R", "now": "Owns and shapes the architecture of the automation stack and the data flows between internal tools and third-party platforms. Anticipates how a change propagates across CRM, DWH and department tools. Identifies and addresses systemic risk.", "next": "Owns the target architecture of the AI team's stack. Agrees with Engineering, Data and RevOps where AI Ops ends and their platforms begin, and keeps those boundaries clean."}, {"name": "Product Knowledge", "type": "R", "now": "Authoritative on how each department actually works (Sales, CS, Onboarding, Care, Finance, HR) and on Amenitiz's product (PMS, Channel Manager, Booking Engine, Payments). Shapes department processes through technical insight. Traces a request back to the real problem instead of executing the brief.", "next": "Understands the business model end to end, from lead to retained hotelier. Spots cross-department problems no single team owns and turns them into AI Ops initiatives."}, {"name": "Risk Management", "type": "R", "now": "Anticipates technical and operational risks of each automation: dirty data, silent failures, model drift, vendor lock-in. Owns mitigation across the project portfolio. Spots risk patterns before they cause incidents.", "next": "Translates AI risk into business risk for leadership. Keeps a view of AI dependencies across the business departments and decides where human review stays mandatory."}, {"name": "Security", "type": "R", "now": "Secures every system she ships. Secrets live in a vault, never in code, prompts or workflow configs. Each workflow and agent has its own least-privilege key or service account. Agents cannot write to production data, send money or message customers without a human approval step. Any agent that reads outside content (emails, tickets, web pages) is protected against prompt injection. Decides what customer and employee data may go to a model, in line with GDPR. Follows the Engineering Platform team's security standards and reviews new integrations with them before go-live.", "next": "Owns the AI team's security model: a threat model per agent, a quarterly access review, and an audit log of what each agent did and with which data. Works with the Engineering Platform team on AI security: agrees the AI team's standards with them and gets their sign-off before any agent touches customer, payment or employee data. Handles every security incident with a written post-mortem."}, {"name": "AI Tooling", "type": "R", "now": "Design. Designs the AI-augmented process for a department or workflow. Evaluates new capabilities (conversational AI, voice AI, orchestrators, agent frameworks), runs fast POCs and makes the adopt/kill calls. Builds the harnesses, evals and guardrails that make agents safe and repeatable in production. Sets the standards for AI in production and defines how each project measures AI effectiveness, separating real impact from vanity metrics. Aligns with the Engineering Platform team on models, hosting and data access before adopting a new capability.", "next": "Transform. Shapes how the business departments work with AI, not one workflow at a time. Anticipates which capabilities will matter in the next 12 months and positions the stack ahead of them. Makes adopt/kill calls for the AI team's stack, in collaboration with the Engineering Platform team so both stacks stay compatible."}, {"name": "Observability", "type": "R", "now": "Designs the observability of every system from day one: failure alerts, performance dashboards, LLM cost monitoring. Defines uptime targets that map to business impact (99%+ on business-critical flows). Sets up monitoring so user teams run day-to-day operations and escalate only what they can't handle. Reduces time to detect and fix through better signal.", "next": "Sets the observability standard every AI team system must meet. Runs a single health view of all AI systems that leadership can read."}, {"name": "Distributed Systems", "type": "R", "now": "Designs integrations and workflows that handle partial failure: retry budgets, idempotency, timeouts, backpressure on third-party APIs. Avoids accidental coupling between tools. Anticipates failure modes (rate limits, cascading failures, duplicate runs) at design time.", "next": "Designs the integration patterns the AI team reuses across systems. Plans for failure at company scale: what keeps running when a vendor or model is down."}, {"name": "RFC / Design Document Authorship", "type": "R", "now": "Authors a design doc for each system before building: problem, alternatives, decision, expected impact. Documents architecture, dependencies, failure modes and runbooks so the system keeps running without her. Docs become reference material that outlives the project.", "next": "Authors the RFCs that set AI direction across the business departments. Her docs are used by leadership to make investment decisions."}, {"name": "Build vs Buy vs Extend", "type": "R", "now": "Makes credible build vs buy vs extend decisions for the AI stack. Articulates total cost of ownership, including maintenance load on user teams. Reviews tool ROI quarterly and sunsets tools below threshold. Doesn't reach for 'build' as a default.", "next": "Owns vendor strategy for the AI team's tools. Negotiates and consolidates contracts, and prevents duplicate tools across the business departments."}, {"name": "Relationship Management", "type": "S", "now": "Builds strategic relationships with VPs, heads and managers across every department. Acts as trusted advisor on AI and automation trade-offs. Go-to person for AI and automation: teams come to her before they buy a tool or build a workaround. Drives adoption: trains users on live systems, supports them in the first weeks, hands over day-to-day ownership.", "next": "Trusted advisor to the leadership team on AI. Consulted by default on any business department initiative with an AI or automation angle. Builds relationships with key external partners and vendors."}, {"name": "Influence & Persuasion", "type": "S", "now": "Visible at company level: presents AI Ops missions and shipped results at All Hands, and explains what the function does and how to work with it. Influences how departments work and what leadership invests in. Builds buy-in through validated business cases and monthly impact reporting, not authority.", "next": "Shapes the business departments' direction on AI, not only single decisions. Represents Amenitiz externally: talks, writing, and the AI side of the employer brand. Gets leadership buy-in for transformational changes that cut across the business departments."}, {"name": "Strategic Thinking", "type": "S", "now": "Aligns the project pipeline with company priorities. Contributes to leadership planning with a view of where AI can move company goals.", "next": "Owns the AI Ops roadmap with leadership. Proposes initiatives nobody asked for, tied to company goals such as scaling to 50,000 properties without scaling the team linearly."}, {"name": "AI Economics", "type": "S", "now": "Knows the cost and return of every system she runs: LLM and tool spend, hours reclaimed, revenue protected. Reports them in euros.", "next": "Owns the AI and automation budget as a portfolio. Makes the case in euros for where to invest, what to stop, and which hires the company avoided. Speaks the language of Finance and the founders."}, {"name": "Sponsorship", "type": "S", "now": "Grows AI skills in the teams she works with: workshops, demos of live cases, pairing with power users. Builds a first network of AI champions, one per department.", "next": "Multiplies her impact through others: champions run simple automations on their own with self-serve templates, and she hires and grows the first AI Ops team members. Opens the manager track (AI Ops Team Lead, M3) without making it the only path."}], "nextId": "ic5_ai_ops_sr_mgr", "nextLabel": "AI Operations Senior Manager", "nextLevel": "IC5", "terminal": false, "nextUndefined": false, "journeyIds": ["ic4_ai_ops_mgr", "ic5_ai_ops_sr_mgr"]}, "ic5_ai_ops_sr_mgr": {"label": "AI Operations Senior Manager", "level": "IC5", "track": "IC", "summary": "Recognised authority on AI and automation at Amenitiz, inside and outside the company. Owns the AI Ops roadmap with leadership and proposes the initiatives that move company goals, not only the ones departments bring. Multiplies her impact through others: department champions, self-serve tooling, and eventually a team. <br><br><strong>Scope:<\/strong> business departments (Sales, CS, Onboarding, Care, Finance, HR). Product and Tech are out of scope: AI Ops collaborates with them but has no impact on, and no decision over, their roadmap, stack or standards.", "lateral": null, "competencies": [{"name": "Technical Ladder Stage", "type": "R", "now": "Agentic engineering (Transform)<br>Agents write most of the code; she owns the spec, the architecture, the harness and the review. Work starts from a written spec, runs inside a harness, is blocked by eval gates, and every agent failure becomes a permanent fix to the harness. The AI team builds on her harness, designed with the Engineering Platform team on shared infrastructure (CI, secrets, permissions). Evidence in the Technical ladder tab.", "next": "Agentic engineering becomes the default way the AI team builds: the harness, eval gates and failure log run without her, and new team members ship through them from week one."}, {"name": "Analytical Thinking", "type": "U", "now": "Defines how the business departments measure the impact of AI. Owns a single impact view (hours reclaimed, revenue protected, cost avoided) that leadership uses to decide where to invest next.", "next": "The impact view becomes the reference leadership uses in planning cycles. AI investment decisions are made on it, not on anecdote."}, {"name": "Code Quality & Best Practices", "type": "R", "now": "Defines the standards the AI team follows when it builds automations or agents, and the guardrails for non-engineers using the AI team's self-serve tools. Her patterns and templates are the AI team's default starting point.", "next": "Her standards hold without her review: the AI team and department champions apply them on their own, and they evolve as the stack changes."}, {"name": "Quality Focus", "type": "R", "now": "Owns quality across the AI team's whole portfolio. Sets the eval and release bar an automation must pass before it touches customers, money or employee data.", "next": "Quality is built into the system, not checked at the end. Eval and release bars catch issues before any customer, money or employee data is touched, across a growing portfolio."}, {"name": "Performance Optimization", "type": "R", "now": "Sets performance and cost budgets for the AI team's systems. Identifies and fixes bottlenecks that span several departments or platforms.", "next": "Performance and cost budgets scale with volume: the AI team's systems absorb company growth without linear increases in spend."}, {"name": "Systems Thinking", "type": "R", "now": "Owns the target architecture of the AI team's stack. Agrees with Engineering, Data and RevOps where AI Ops ends and their platforms begin, and keeps those boundaries clean.", "next": "The target architecture stays coherent as the AI team and its stack grow. Boundaries with Engineering, Data and RevOps remain clean through every change."}, {"name": "Product Knowledge", "type": "R", "now": "Understands the business model end to end, from lead to retained hotelier. Spots cross-department problems no single team owns and turns them into AI Ops initiatives.", "next": "Anticipates where the business model will strain as Amenitiz scales and positions AI Ops initiatives ahead of those problems."}, {"name": "Risk Management", "type": "R", "now": "Translates AI risk into business risk for leadership. Keeps a view of AI dependencies across the business departments and decides where human review stays mandatory.", "next": "AI risk is part of how leadership plans, not a separate conversation. Human-review rules are reviewed and adjusted as models and use cases evolve."}, {"name": "Security", "type": "R", "now": "Owns the AI team's security model: a threat model per agent, a quarterly access review, and an audit log of what each agent did and with which data. Works with the Engineering Platform team on AI security: agrees the AI team's standards with them and gets their sign-off before any agent touches customer, payment or employee data. Handles every security incident with a written post-mortem.", "next": "The AI security model is mature and audited. Zero repeat incidents, and the Engineering Platform team relies on it as a shared standard."}, {"name": "AI Tooling", "type": "R", "now": "Transform. Shapes how the business departments work with AI, not one workflow at a time. Anticipates which capabilities will matter in the next 12 months and positions the stack ahead of them. Makes adopt/kill calls for the AI team's stack, in collaboration with the Engineering Platform team so both stacks stay compatible.", "next": "Keeps Amenitiz ahead of the curve: the stack is ready for the next wave of capabilities before departments ask for them."}, {"name": "Observability", "type": "R", "now": "Sets the observability standard every AI team system must meet. Runs a single health view of all AI systems that leadership can read.", "next": "One health view covers every AI system, and leadership reads it routinely. Time to detect and fix keeps going down."}, {"name": "Distributed Systems", "type": "R", "now": "Designs the integration patterns the AI team reuses across systems. Plans for failure at company scale: what keeps running when a vendor or model is down.", "next": "The integration patterns are proven at scale: vendor or model outages degrade gracefully with no business-critical impact."}, {"name": "RFC / Design Document Authorship", "type": "R", "now": "Authors the RFCs that set AI direction across the business departments. Her docs are used by leadership to make investment decisions.", "next": "Her RFCs shape multi-year AI direction and become the reference documents the company returns to."}, {"name": "Build vs Buy vs Extend", "type": "R", "now": "Owns vendor strategy for the AI team's tools. Negotiates and consolidates contracts, and prevents duplicate tools across the business departments.", "next": "The AI tool portfolio stays lean and consolidated. Vendor strategy delivers measurable savings and no duplicate tools across the business departments."}, {"name": "Relationship Management", "type": "S", "now": "Trusted advisor to the leadership team on AI. Consulted by default on any business department initiative with an AI or automation angle. Builds relationships with key external partners and vendors.", "next": "Recognised externally as a reference on AI in hospitality tech. Partnerships with key vendors and partners give Amenitiz early access and leverage."}, {"name": "Influence & Persuasion", "type": "S", "now": "Shapes the business departments' direction on AI, not only single decisions. Represents Amenitiz externally: talks, writing, and the AI side of the employer brand. Gets leadership buy-in for transformational changes that cut across the business departments.", "next": "Shapes how leadership thinks about AI, not only what it funds. Amenitiz's AI story is a visible part of the employer brand."}, {"name": "Strategic Thinking", "type": "S", "now": "Owns the AI Ops roadmap with leadership. Proposes initiatives nobody asked for, tied to company goals such as scaling to 50,000 properties without scaling the team linearly.", "next": "The AI Ops roadmap is a core part of company strategy. Initiatives she proposes directly move company-level goals, such as scaling properties without scaling the team linearly."}, {"name": "AI Economics", "type": "S", "now": "Owns the AI and automation budget as a portfolio. Makes the case in euros for where to invest, what to stop, and which hires the company avoided. Speaks the language of Finance and the founders.", "next": "The AI portfolio has a clear, reported return in euros, and Finance uses her numbers in company planning."}, {"name": "Sponsorship", "type": "S", "now": "Multiplies her impact through others: champions run simple automations on their own with self-serve templates, and she hires and grows the first AI Ops team members. Opens the manager track (AI Ops Team Lead, M3) without making it the only path.", "next": "Champions run their own automations and the first AI Ops team members grow under her. If she opens the manager track (AI Ops Team Lead, M3), it is a choice, not the only path."}], "nextId": null, "nextLabel": null, "nextLevel": null, "terminal": true, "nextUndefined": false, "journeyIds": ["ic4_ai_ops_mgr", "ic5_ai_ops_sr_mgr"], "growthWithin": true}};
+const icTracks = [{"id": "AIOps", "label": "AI Operations"}];
+const icLevels = ["IC5", "IC4"];
+const icGrid   = {"ic5_ai_ops_sr_mgr": {"level": "IC5", "track": "AIOps"}, "ic4_ai_ops_mgr": {"level": "IC4", "track": "AIOps"}};
+const mgLevels = [];
+const mgLadder = {};
+const levelDefs = {"IC4": {"title": "IC4 — Expert / Sub-discipline owner", "track": "IC", "mantra": "Given white space: figure out WHY, WHAT, HOW, then DO.", "dimensions": [{"label": "Scope of Influence", "text": "Company. Works with peers from different functions, and has an impact across departments."}, {"label": "Complexity & Problem Solving", "text": "Owns and solves complex tasks that are part of a large project, or leads small projects on their own."}, {"label": "Expertise", "text": "Has in-depth knowledge in own discipline and advanced knowledge of related disciplines."}], "core": [{"label": "Ownership, Initiative & Commitment", "bullets": ["Takes responsibility for tasks under supervision, ensuring success.", "Delivers work that is aligned with high standards and deadlines.", "Shows initiative in improving processes and owning outcomes — always asking 'how can I have more impact?'", "Ships on the date she committed to. When a date slips, she flags it before the deadline with a new date and the reason. Improves at least one AI Ops process per quarter without being asked (intake, templates, monitoring).", "Every project starts with a written business case and KPIs agreed with the requesting head, and closes with a before/after impact number.", "Runs AI Ops without her manager chasing: the project register is always current, incidents are fixed or escalated within one business day, and her manager hears about problems from her first."]}, {"label": "Speed of execution, Adaptability & Problem Solving", "bullets": ["Completes tasks promptly with guidance.", "Adapts to immediate changes in priorities.", "Identifies and understands problems within their scope, breaks down simple problems into manageable tasks, and implements solutions under supervision.", "Delivers quick quality work under changing conditions with limited guidance or supervision.", "Manages multiple priorities efficiently.", "Adapts quickly to market or organizational changes, demonstrating resilience in a fast-paced environment.", "Encourages innovative solutions to meet evolving business needs, and balances short-term fixes with long-term considerations."]}, {"label": "Ambition, Continuous Learning & Impact Driven", "bullets": ["Delivers work aligned with team objectives, focusing on measurable results.", "Seeks personal performance improvement and asks for resources to grow — from mentors, colleagues and manager.", "Shows commitment to continuous learning and growth; seeks feedback to improve.", "Identifies and delivers impactful work, ensuring their work creates value for the team and impacts project success.", "Exceeds goals by proactively identifying opportunities.", "Seeks growth opportunities aligned with company goals."]}, {"label": "Team Work, Collaboration & Respect", "bullets": ["Supports team success with constructive contributions.", "Respects others' input and communicates respectfully and openly.", "Maintains a positive attitude to foster a healthy culture and builds trust within the team.", "Builds strong relationships within the team with stakeholders and collaborators, encouraging collaboration and inclusivity.", "Resolves conflicts constructively, fostering stronger team cohesion and trust.", "Supports team members in achieving shared goals."]}], "manager": null}, "IC5": {"title": "IC5 — Senior Manager", "track": "IC", "mantra": "With increasing scope (usually at the level of a huge complex project/product or a part of a department), given white space: figure out WHY, WHAT, HOW, then DO.", "dimensions": [{"label": "Scope of Influence", "text": "Company and external stakeholders. Partners with senior leaders to have a strategic impact across the company; identified as decision maker on their scope of expertise."}, {"label": "Complexity & Problem Solving", "text": "Owns and leads large and complex projects across the whole company."}, {"label": "Expertise", "text": "Recognised as an expert within own discipline; has specialised expertise in own discipline or function."}], "core": [{"label": "Ownership, Initiative & Commitment", "bullets": ["Takes responsibility for tasks under supervision, ensuring success.", "Delivers work that is aligned with high standards and deadlines.", "Shows initiative in improving processes and owning outcomes — always asking 'how can I have more impact?'", "Ships on the date she committed to. When a date slips, she flags it before the deadline with a new date and the reason. Improves at least one AI Ops process per quarter without being asked (intake, templates, monitoring).", "Every project starts with a written business case and KPIs agreed with the requesting head, and closes with a before/after impact number.", "Runs AI Ops without her manager chasing: the project register is always current, incidents are fixed or escalated within one business day, and her manager hears about problems from her first.", "Leads initiatives, aligning with company goals, and inspires others to take ownership.", "Consistently exceeds expectations through proactive effort.", "Inspires others to take ownership and responsibility for success."]}, {"label": "Speed of execution, Adaptability & Problem Solving", "bullets": ["Completes tasks promptly with guidance.", "Adapts to immediate changes in priorities.", "Identifies and understands problems within their scope, breaks down simple problems into manageable tasks, and implements solutions under supervision.", "Delivers quick quality work under changing conditions with limited guidance or supervision.", "Manages multiple priorities efficiently.", "Adapts quickly to market or organizational changes, demonstrating resilience in a fast-paced environment.", "Encourages innovative solutions to meet evolving business needs, and balances short-term fixes with long-term considerations.", "Anticipates obstacles and adjusts strategies.", "Consistently executes critical projects on tight timelines.", "Improves team adaptability, resilience, and scalability in dynamic environments.", "Diagnoses and resolves complex problems, ensuring alignment with organizational goals."]}, {"label": "Ambition, Continuous Learning & Impact Driven", "bullets": ["Delivers work aligned with team objectives, focusing on measurable results.", "Seeks personal performance improvement and asks for resources to grow — from mentors, colleagues and manager.", "Shows commitment to continuous learning and growth; seeks feedback to improve.", "Identifies and delivers impactful work, ensuring their work creates value for the team and impacts project success.", "Exceeds goals by proactively identifying opportunities.", "Seeks growth opportunities aligned with company goals.", "Shapes high-impact initiatives and aligns efforts with priorities.", "Aligns team efforts with strategic priorities, ensuring involved teams understand the company strategy.", "Encourages the team to set ambitious goals and exceed them."]}, {"label": "Team Work, Collaboration & Respect", "bullets": ["Supports team success with constructive contributions.", "Respects others' input and communicates respectfully and openly.", "Maintains a positive attitude to foster a healthy culture and builds trust within the team.", "Builds strong relationships within the team with stakeholders and collaborators, encouraging collaboration and inclusivity.", "Resolves conflicts constructively, fostering stronger team cohesion and trust.", "Supports team members in achieving shared goals.", "Drives alignment across teams for shared success.", "Builds cross-functional relationships to drive alignment and shared goals.", "Facilitates open dialogue to resolve interpersonal challenges.", "Demonstrates transparency and honesty to build trust and alignment."]}], "manager": null}};
+
+// ── BUILD PATHS (multi-role per cell) ──
+function buildPaths() {
+  const c = document.getElementById('pathsContainer');
+  let html = '';
+  // IC
+  html += '<div class="path-section path-section-ic"><div class="path-head"><div class="path-head-text"><div class="path-head-title">Individual Contributor</div><div class="path-head-sub">Deepen your craft in AI and automation for the business departments.</div></div></div>';
+  html += '<div class="ic-grid-wrap"><div class="ic-grid"><div></div>';
+  icTracks.forEach(t => { html += `<div class="track-header">${t.label}</div>`; });
+  icLevels.forEach(lvl => {
+    html += `<div class="level-label ic-label" data-level="${lvl}" title="Click to see ${lvl} level definition">${lvl}</div>`;
+    icTracks.forEach(track => {
+      const roleIds = Object.keys(icGrid).filter(rid => icGrid[rid].level===lvl && icGrid[rid].track===track.id);
+      if (roleIds.length === 0) {
+        html += '<div class="org-empty"></div>';
+      } else {
+        html += '<div class="cell-wrap">';
+        roleIds.forEach(rid => {
+          const r = roles[rid];
+          let cls = '';
+          if (r.gate) cls += ' org-cell-gated';
+          // Only show gate-tag text for meaningful labels (e.g., active hire status).
+          // 'future' and 'vacant' are just placeholder markers — visual gating is enough.
+          const showGateTag = r.gate && r.gate.label && !['future', 'vacant'].includes(r.gate.label);
+          const gateTag = showGateTag ? `<span class="gate-tag">${r.gate.label}</span>` : '';
+          html += `<div class="org-cell${cls}" data-id="${rid}">${r.label}${gateTag}</div>`;
+        });
+        html += '</div>';
+      }
+    });
+  });
+  html += '</div></div></div>';
+
+  // Manager
+  if (mgLevels.length) {
+  html += '<div class="path-section path-section-mg"><div class="path-head"><div class="path-head-text"><div class="path-head-title">Managerial</div><div class="path-head-sub">Lead Marketing teams. From M3 (Team Lead) up to VP (function owner).</div></div></div>';
+  html += '<div class="mg-ladder">';
+  mgLevels.forEach(lvl => {
+    html += `<div class="mg-row">`;
+    html += `<div class="level-label mg-label" data-level="${lvl}" title="Click to see ${lvl} level definition">${lvl}</div>`;
+    const roleIds = Object.keys(mgLadder).filter(rid => mgLadder[rid].level === lvl);
+    html += '<div class="mg-roles">';
+    roleIds.forEach(rid => {
+      html += `<div class="org-cell org-cell-mg" data-id="${rid}">${roles[rid].label}</div>`;
+    });
+    html += '</div></div>';
+  });
+  html += '</div></div>';
+  }
+
+  c.innerHTML = html;
+  c.querySelectorAll('.org-cell').forEach(cell => cell.addEventListener('click', () => render(cell.dataset.id)));
+  c.querySelectorAll('.level-label').forEach(lbl => lbl.addEventListener('click', () => onLevelLabelClick(lbl.dataset.level)));
+}
+
+// ── PANEL TOGGLE ──
+function setPanelOpen(panelId, open) { document.getElementById(panelId).classList.toggle('is-open', open); }
+document.querySelectorAll('.panel-header').forEach(h => {
+  h.addEventListener('click', () => { h.closest('.panel').classList.toggle('is-open'); });
+});
+
+// ── LEVEL DEFINITION ──
+let _currentLevel = null;
+function renderLevelDefinition(lvl) {
+  const def = levelDefs[lvl];
+  if (!def) return;
+  const panel = document.getElementById('ldPanel');
+  panel.classList.toggle('is-mg', def.track==='Manager');
+  document.getElementById('ldTitle').innerHTML = `<span class="panel-title-strong">${def.title}</span> · ${def.track==='Manager'?'Manager track':'IC track'}`;
+  let html = `<div class="ld-mantra">"${def.mantra}"</div>`;
+  html += `<div class="ld-grid${def.dimensions.length===2?' cols-2':''}">`;
+  html += def.dimensions.map(d => `<div class="ld-dim"><div class="ld-dim-label">${d.label}</div><div class="ld-dim-text">${d.text}</div></div>`).join('');
+  html += '</div>';
+  document.getElementById('ldInner').innerHTML = html;
+  document.querySelectorAll('.level-label').forEach(l => l.classList.toggle('active-level', l.dataset.level===lvl));
+}
+
+// ── COMPETENCIES PANEL (level-bound core) ──
+let _activeCmpTab = 'core';
+function renderCompetencies(lvl) {
+  const def = levelDefs[lvl];
+  if (!def) return;
+  const panel = document.getElementById('cmpPanel');
+  panel.classList.toggle('is-mg', def.track==='Manager');
+  document.getElementById('cmpTitle').innerHTML = `<span class="panel-title-strong">${def.title}</span> · ${def.track==='Manager'?'Manager track':'IC track'}`;
+  const tabsEl = document.getElementById('cmpTabs');
+  let tabsHtml = `<button class="cmp-tab" data-tab="core"><span class="cmp-tab-dot dot-core"></span>Core</button>`;
+  if (def.manager) tabsHtml += `<button class="cmp-tab" data-tab="persona"><span class="cmp-tab-dot dot-persona"></span>Manager Persona</button>`;
+  tabsEl.innerHTML = tabsHtml;
+  tabsEl.querySelectorAll('.cmp-tab').forEach(t => t.addEventListener('click', () => switchCmpTab(t.dataset.tab)));
+  const contentsEl = document.getElementById('cmpContents');
+  let cHtml = `<div class="cmp-content" data-tab="core"><div class="cmp-grid-2">`;
+  cHtml += def.core.map(c => `<div class="cmp-card"><div class="cmp-card-label">${c.label}</div><ul class="cmp-bullets">${c.bullets.map(b => `<li>${b}</li>`).join('')}</ul></div>`).join('');
+  cHtml += '</div></div>';
+  if (def.manager) {
+    cHtml += `<div class="cmp-content" data-tab="persona"><div class="cmp-grid-3">`;
+    cHtml += def.manager.map(c => `<div class="cmp-card persona"><div class="cmp-card-label">${c.label}</div><ul class="cmp-bullets">${c.bullets.map(b => `<li>${b}</li>`).join('')}</ul></div>`).join('');
+    cHtml += '</div></div>';
+  }
+  contentsEl.innerHTML = cHtml;
+  if (_activeCmpTab==='persona' && !def.manager) _activeCmpTab='core';
+  switchCmpTab(_activeCmpTab);
+}
+function switchCmpTab(tab) {
+  _activeCmpTab = tab;
+  document.querySelectorAll('#cmpTabs .cmp-tab').forEach(t => t.classList.toggle('active', t.dataset.tab===tab));
+  document.querySelectorAll('#cmpContents .cmp-content').forEach(c => c.classList.toggle('active', c.dataset.tab===tab));
+}
+
+// ── LEVEL CLICK ──
+function onLevelLabelClick(lvl) {
+  _currentLevel = lvl;
+  document.querySelectorAll('.org-cell').forEach(c => c.classList.remove('active'));
+  renderLevelDefinition(lvl);
+  renderCompetencies(lvl);
+  setPanelOpen('ldPanel', true);
+  setPanelOpen('cmpPanel', true);
+  setTimeout(() => { document.getElementById('ldPanel').scrollIntoView({behavior:'smooth', block:'start'}); }, 100);
+}
+
+// ── TIMELINE BANNER ──
+// Marketing roles don't have rigid month-based timelines like Sales SDRs.
+// Progression is performance + scope + impact driven (not time-based).
+function renderTimeline(role) {
+  const el = document.getElementById('kpiStrip');
+  let nextHint = '';
+  if ((role.nextId && roles[role.nextId]) || role.nextVirtual) {
+    const next = roles[role.nextId] || role.nextVirtual;
+    nextHint = `Demonstrated impact, expanded scope and consistent delivery typically unlock progression to <strong>${next.label}</strong> (${next.level}).`;
+  }
+  else if (role.growthWithin) {
+    nextHint = `Growth happens <strong>within the position</strong>: deeper mastery, wider scope and greater impact in the role.`;
+  }
+  // No next defined → nothing shown (per user: "non mettere nulla")
+  const captionHtml = nextHint ? `<div class="timeline-caption">${nextHint}</div>` : '';
+  el.innerHTML = `
+    <div class="timeline-banner">
+      <div class="timeline-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div class="timeline-text">
+        <div class="timeline-row"><span class="timeline-label">Progression</span><span class="timeline-value">Performance &amp; scope-driven</span></div>
+        ${captionHtml}
+      </div>
+    </div>
+  `;
+}
+
+// ── BADGES ──
+function badge(type) {
+  if (type==='U') return '<span class="badge b-u">universal</span>';
+  if (type==='R') return '<span class="badge b-r">role-specific</span>';
+  return '<span class="badge b-s">seniority-gated</span>';
+}
+
+// ── MAIN RENDER ──
+function render(roleId) {
+  const role = roles[roleId];
+  if (!role) return;
+  const isMg = role.track === 'Manager';
+
+  document.querySelectorAll('.org-cell').forEach(b => b.classList.toggle('active', b.dataset.id === roleId));
+  document.querySelectorAll('.level-label').forEach(l => l.classList.toggle('active-level', l.dataset.level === role.level));
+
+  // Journey card is in What's Next section, show it when role selected
+  const jc = document.getElementById('journeyCard');
+  if (jc) jc.style.display = 'block';
+  jc.classList.toggle('is-mg', isMg);
+
+  // Journey
+  const jEl = document.getElementById('journey');
+  jEl.innerHTML = '';
+  const ids = role.journeyIds || [roleId];
+  const ci = ids.indexOf(roleId);
+  ids.forEach((id, i) => {
+    const r = roles[id];
+    if (!r) return;
+    const cls = i < ci ? 'j-past' : i === ci ? 'j-current' : i === ci + 1 ? 'j-next' : 'j-future';
+    const lc = i === ci ? 'current' : i === ci + 1 ? 'next' : '';
+    const trackCls = r.track === 'Manager' ? ' j-mg' : '';
+    jEl.innerHTML += `<div class="jstep" data-id="${id}"><div class="jcircle ${cls}${trackCls}">${r.level}</div><div class="jlabel ${lc}">${r.label}</div></div>`;
+    if (i < ids.length - 1) {
+      jEl.innerHTML += `<div class="jarrow ${i === ci ? 'active' : ''}"></div>`;
+    }
+  });
+  jEl.querySelectorAll('.jstep').forEach(step => step.addEventListener('click', () => render(step.dataset.id)));
+
+  // Paths row — Marketing has NO laterals (different disciplines) and minimal growth pills
+  const pathsEl = document.getElementById('pathsRow');
+  pathsEl.style.display = 'none';  // hidden — Marketing relies on the journey + role panel
+
+  renderTimeline(role);
+  document.querySelectorAll('.tl-step').forEach(s => {
+    s.classList.toggle('is-current', s.dataset.level === role.level);
+    s.classList.toggle('is-next', !!role.nextLevel && s.dataset.level === role.nextLevel);
+  });
+
+  // Gate banner (aspirational/incoming roles like Sr PMM)
+  const gb = document.getElementById('gateBanner');
+  if (role.gate) {
+    document.getElementById('gateBannerTitle').textContent = `${role.gate.label} · role being added in advance of hire`;
+    document.getElementById('gateBannerBody').innerHTML = role.gate.note;
+    gb.style.display = 'flex';
+  } else {
+    gb.style.display = 'none';
+  }
+
+  // Role summary (HTML allowed for <strong>)
+  const summaryEl = document.getElementById('roleSummary');
+  summaryEl.classList.toggle('is-mg', isMg);
+  const trackLabel = isMg ? 'manager track' : 'IC track';
+  summaryEl.innerHTML = `<strong>${role.label} — ${role.level} · ${trackLabel}</strong>${role.summary || ''}`;
+
+  _currentLevel = role.level;
+  renderLevelDefinition(role.level);
+  renderCompetencies(role.level);
+
+  // Role competencies — now/next
+  const isPlaceholder = !role.competencies || role.competencies.length === 0;
+
+  if (isPlaceholder) {
+    document.getElementById('compGroups').innerHTML = `
+      <div class="placeholder-comparison">
+        <div class="placeholder-comparison-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div>
+          <div class="placeholder-comparison-title">Role competencies to be defined</div>
+          <div class="placeholder-comparison-body">This role does not yet have specific competencies defined.</div>
+        </div>
+      </div>`;
+    document.getElementById('whatsNext').innerHTML = '';
+    return;
+  }
+
+  renderWhatsNext(role);
+  renderCompetencyGroups(role);
+}
+
+// ── NEW: "What's Next" panel — answers user's main question: where do I go, what changes, what to focus on ──
+const LEVEL_SHIFTS = {
+  'IC4→IC5': [
+    'You <strong>own the AI Ops roadmap</strong> with leadership, not only the requests departments bring',
+    'You propose <strong>initiatives nobody asked for</strong>, tied to company goals',
+    'You <strong>multiply your impact through others</strong>: champions, self-serve tooling, first hires',
+    'You become a <strong>recognised authority</strong> on AI, inside and outside Amenitiz',
+  ],
+  'IC2→IC3': [
+    'Scope expands from owning tasks to owning <strong>outcomes</strong>',
+    'You become a <strong>reference</strong> for peers and mentor junior teammates',
+    'Decisions become more <strong>autonomous</strong>; you handle edge cases alone',
+    'You contribute to <strong>process improvements</strong>, not just execution',
+  ],
+  'IC3→IC4': [
+    'You <strong>set the standard</strong> for the function — your judgment is the benchmark',
+    'Scope moves from individual to <strong>company-wide impact</strong>',
+    'You mentor the broader IC track and influence <strong>strategy</strong>',
+    'You represent the function in <strong>leadership discussions</strong>',
+  ],
+  'IC2→M4': [
+    'You transition from <strong>executor to people leader</strong>',
+    'You <strong>build, coach and grow</strong> a team of specialists',
+    'You own the function <strong>strategy, KPIs and roadmap</strong>',
+    'You partner with adjacent leaders on cross-functional outcomes',
+  ],
+  'IC3→M4': [
+    'You transition from individual contributor to <strong>team leader</strong>',
+    'You <strong>recruit, coach and grow</strong> a team',
+    'You own the function <strong>strategy and quality bar</strong>',
+    'You partner with leadership on company-wide priorities',
+  ],
+  'M3→M5': [
+    'You move from team lead to <strong>function head</strong>',
+    'You <strong>manage managers</strong> and define the function strategy',
+    'You own <strong>budget, headcount</strong> and major program investments',
+    'You contribute to <strong>executive-level</strong> discussions',
+  ],
+  'M4→VP': [
+    'You move from leading a sub-function to <strong>owning a department</strong>',
+    'You become a member of the <strong>executive team</strong>',
+    'You define the department <strong>vision</strong> and contribute to company strategy',
+    'You own the budget and represent the function at <strong>board level</strong>',
+  ],
+  'M5→VP': [
+    'You move from heading a sub-function to <strong>leading the entire department</strong>',
+    'You join the <strong>executive team</strong>',
+    'You shape <strong>company strategy</strong> and represent Marketing at board/investor level',
+    'You own the full <strong>Marketing budget and headcount</strong> across all sub-functions',
+  ],
+};
+
+function renderWhatsNext(role) {
+  const el = document.getElementById('whatsNext');
+  if ((!role.nextId || !roles[role.nextId]) && !role.nextVirtual && role.growthWithin) {
+    const edge = (role.competencies || []).filter(c => c.type === 'S').slice(0, 2).map(c => c.name);
+    if (edge.length < 3) edge.push(...(role.competencies || []).filter(c => c.type === 'R').slice(0, 3 - edge.length).map(c => c.name));
+    el.innerHTML = `
+    <div class="whats-next-panel">
+      <div class="whats-next-label">Growth within the position</div>
+      <div class="whats-next-title">${role.label}<span class="whats-next-level-pill">${role.level}</span></div>
+      <div class="whats-next-summary">There is no defined next role for this position. Growth means deeper mastery, wider scope and greater impact in the role. The <strong>next</strong> column in your progression path shows the most advanced expectations for each competency.</div>
+      ${edge.length ? `<div class="whats-next-focus"><div class="whats-next-focus-label">To grow, focus on developing</div><div class="whats-next-focus-tags">${edge.map(n => `<span class="focus-tag">${n}</span>`).join('')}</div></div>` : ''}
+    </div>`;
+    return;
+  }
+  if ((!role.nextId || !roles[role.nextId]) && !role.nextVirtual) { 
+    el.innerHTML = `
+      <div class="whats-next-tbd">
+        <div class="whats-next-tbd-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+        </div>
+        <div class="whats-next-tbd-title">Next step to be defined</div>
+        <div class="whats-next-tbd-body">This role is currently at the top of its progression path, or the next step is being designed. Check back with your manager or People team for career development options.</div>
+      </div>`;
+    return; 
+  }
+  const next = roles[role.nextId] || role.nextVirtual;
+  const transitionKey = `${role.level}→${next.level}`;
+  const shifts = LEVEL_SHIFTS[transitionKey] || [
+    'Scope and ownership expand to match the new level',
+    'Your decisions have <strong>broader impact</strong> on the function',
+    'You take on <strong>more autonomy</strong> in setting direction',
+  ];
+  // Identify 2-3 growth-edge competencies: prefer seniority-gated, then role-specific
+  const growthEdge = (role.competencies || [])
+    .filter(c => c.type === 'S')
+    .slice(0, 2)
+    .map(c => c.name);
+  // Pad with role-specific JD-like comps if needed
+  if (growthEdge.length < 3) {
+    const rExtras = (role.competencies || [])
+      .filter(c => c.type === 'R' && c.next && c.next !== '—')
+      .slice(0, 3 - growthEdge.length)
+      .map(c => c.name);
+    growthEdge.push(...rExtras);
+  }
+  const focusTags = growthEdge.length
+    ? `<div class="whats-next-focus">
+         <div class="whats-next-focus-label">To get there, focus on developing</div>
+         <div class="whats-next-focus-tags">
+           ${growthEdge.map(n => `<span class="focus-tag">${n}</span>`).join('')}
+         </div>
+       </div>` : '';
+  const shiftsHtml = shifts.map(s => `<div class="shift-card"><span class="shift-card-icon">→</span><span>${s}</span></div>`).join('');
+  // Strip HTML tags for clean summary preview
+  const cleanSummary = (next.summary || '').replace(/<[^>]+>/g, '');
+  el.innerHTML = `
+    <div class="whats-next-panel">
+      <div class="whats-next-label">Next stop in your career</div>
+      <div class="whats-next-title">${next.label}<span class="whats-next-level-pill">${next.level}</span></div>
+      <div class="whats-next-summary">${cleanSummary}</div>
+      <div class="whats-next-shifts">${shiftsHtml}</div>
+      ${focusTags}
+    </div>`;
+}
+
+// ── NEW: Competency groups — grouped by type with clear headers ──
+function renderCompetencyGroups(role) {
+  const el = document.getElementById('compGroups');
+  const byType = { U: [], R: [], S: [] };
+  (role.competencies || []).forEach(c => { (byType[c.type] || byType.R).push(c); });
+  const next = role.nextId && roles[role.nextId] ? roles[role.nextId] : (role.nextVirtual || null);
+  const TYPE_META = {
+    U: { cls: 'cg-u', label: 'Universal — the foundations', hint: 'expected at every role across Amenitiz' },
+    R: { cls: 'cg-r', label: 'Role-specific — your craft', hint: 'unique to this discipline and track' },
+    S: { cls: 'cg-s', label: 'Seniority-gated — leadership edge', hint: 'unlock with broader scope and influence' },
+  };
+  const renderRow = c => {
+    const nowText = c.now || '<span class="comp-row-desc is-empty">—</span>';
+    const nextHas = c.next && c.next !== '—';
+    const nextText = nextHas ? c.next : '<span class="comp-row-desc is-empty">—</span>';
+    const nextCol = next
+      ? `<div class="comp-row-new"><div class="comp-row-name">${c.name}</div><div class="comp-row-desc">${nextText}</div></div>`
+      : '';
+    return { now: `<div class="comp-row-new"><div class="comp-row-name">${c.name}</div><div class="comp-row-desc">${nowText}</div></div>`, next: nextCol };
+  };
+  const sections = ['U','R','S'].map(t => {
+    if (!byType[t].length) return '';
+    const meta = TYPE_META[t];
+    const rows = byType[t].map(renderRow);
+    const nowHdr = `${role.label} — ${role.level} · <strong>now</strong>`;
+    const nextHdr = next ? `${next.label} — ${next.level} · <strong>next</strong>` : (role.growthWithin ? `Growth within the position · <strong>next</strong>` : '—');
+    const nowArr = rows.map(r => r.now);
+    const nextArr = next ? rows.map(r => r.next) : byType[t].map(c => (role.growthWithin && c.next && c.next !== '—') ? `<div class="comp-row-new"><div class="comp-row-name">${c.name}</div><div class="comp-row-desc">${c.next}</div></div>` : `<div class="comp-row-new"><div class="comp-row-name">${c.name}</div><div class="comp-row-desc is-tbd">To be defined</div></div>`);
+    const pairs = nowArr.map((n, i) => `<div class="cc-cell is-now">${n}</div><div class="cc-cell is-next">${nextArr[i]}</div>`).join('');
+    
+    return `
+      <div class="comp-group ${meta.cls}">
+        <div class="comp-group-header">
+          <span>${meta.label}</span>
+          <span class="comp-group-hint">— ${meta.hint}</span>
+          <span class="comp-group-count">${byType[t].length} competencies</span>
+        </div>
+        <div class="comp-group-body">
+          <div class="comp-comparison">
+            <div class="comp-comparison-col-header is-now">${nowHdr}</div>
+            <div class="comp-comparison-col-header is-next">${nextHdr}</div>
+            ${pairs}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+  el.innerHTML = sections;
+}
+
+buildPaths();
+// Initial render: pick a representative IC role
+render('ic4_ai_ops_mgr');
+
+</script>
+</body>
+</html>
